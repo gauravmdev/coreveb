@@ -54,6 +54,42 @@ export const services = [
   },
 ] as const;
 
+// "Hire us instead of hiring staff" — managed IT & support offering.
+export const managedSupport = {
+  eyebrow: "Managed IT & Support",
+  heading: "Your IT & support team — without the hiring",
+  body:
+    "Skip the recruiting, onboarding, salaries, and payroll. Bring on Coreveb as your on-demand IT, engineering, and support desk — and scale the team up or down whenever your needs change.",
+  features: [
+    {
+      icon: "chat",
+      title: "Helpdesk & user support",
+      body: "Responsive support for your team and customers — email, chat, and ticketing handled.",
+    },
+    {
+      icon: "device",
+      title: "Systems & device management",
+      body: "Accounts, devices, software, and access kept secure, updated, and running.",
+    },
+    {
+      icon: "code",
+      title: "Maintenance & DevOps",
+      body: "Updates, deployments, backups, and fixes so your apps and infrastructure stay healthy.",
+    },
+    {
+      icon: "shield",
+      title: "Monitoring & security",
+      body: "Proactive monitoring, alerts, and security hardening to catch issues before users do.",
+    },
+  ],
+  benefits: [
+    "No recruitment or payroll overhead",
+    "Senior expertise from day one",
+    "Scale up or down anytime",
+    "One predictable monthly cost",
+  ],
+} as const;
+
 export const stats = [
   { value: "120+", label: "Products shipped" },
   { value: "40+", label: "Active clients" },
