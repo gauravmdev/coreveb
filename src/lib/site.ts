@@ -57,36 +57,46 @@ export const services = [
 // "Hire us instead of hiring staff" — managed IT & support offering.
 export const managedSupport = {
   eyebrow: "Managed IT & Support",
-  heading: "Your IT & support team — without the hiring",
+  heading: "An in-house IT team is expensive. Hire ours instead.",
   body:
-    "Skip the recruiting, onboarding, salaries, and payroll. Bring on Coreveb as your on-demand IT, engineering, and support desk — and scale the team up or down whenever your needs change.",
+    "Recruiting, salaries, benefits, and payroll for a full in-house team add up fast — and you still need to cover every skill. Bring on Coreveb instead: one team that already spans the expertise you need, at a fraction of the cost, scaling up or down whenever you do.",
   features: [
     {
-      icon: "chat",
-      title: "Helpdesk & user support",
-      body: "Responsive support for your team and customers — email, chat, and ticketing handled.",
-    },
-    {
-      icon: "device",
-      title: "Systems & device management",
-      body: "Accounts, devices, software, and access kept secure, updated, and running.",
-    },
-    {
       icon: "code",
-      title: "Maintenance & DevOps",
-      body: "Updates, deployments, backups, and fixes so your apps and infrastructure stay healthy.",
+      title: "Software Development",
+      body: "Custom web apps, SaaS, and internal tools built and maintained by senior engineers.",
+    },
+    {
+      icon: "grid",
+      title: "Integration with your infrastructure",
+      body: "We plug into your existing systems, APIs, and tools — no rip-and-replace required.",
+    },
+    {
+      icon: "ai",
+      title: "AI",
+      body: "Assistants, automation, and intelligent features wired into your products and workflows.",
+    },
+    {
+      icon: "spark",
+      title: "Digital Marketing",
+      body: "SEO, paid media, content, and analytics that turn attention into pipeline.",
+    },
+    {
+      icon: "search",
+      title: "Bug Fixing",
+      body: "Fast diagnosis and fixes for issues across your apps, sites, and integrations.",
     },
     {
       icon: "shield",
-      title: "Monitoring & security",
-      body: "Proactive monitoring, alerts, and security hardening to catch issues before users do.",
+      title: "Cyber Security",
+      body: "Monitoring, hardening, and best practices to keep your systems and data protected.",
     },
   ],
   benefits: [
-    "No recruitment or payroll overhead",
-    "Senior expertise from day one",
+    "A fraction of an in-house team's cost",
+    "No recruitment, salaries, or payroll",
+    "Senior, multi-skilled experts",
     "Scale up or down anytime",
-    "One predictable monthly cost",
   ],
 } as const;
 
