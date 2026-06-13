@@ -56,11 +56,11 @@ export default async function LoginPage({
       <div className="relative w-full max-w-md">
         <Link href="/" className="mb-8 flex justify-center">
           <Image
-            src="/coreveb-logo.png"
+            src="/coreveb-logo-dark.png"
             alt="Coreveb"
-            width={931}
-            height={334}
-            className="h-12 w-auto mix-blend-screen"
+            width={966}
+            height={280}
+            className="h-11 w-auto"
             priority
           />
         </Link>

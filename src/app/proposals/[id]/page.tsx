@@ -59,10 +59,10 @@ export default async function ProposalPage({
         {/* ---------- Cover ---------- */}
         <section className="proposal-page print-bg flex h-[1120px] flex-col justify-between overflow-hidden bg-gradient-to-br from-teal-900 to-teal-700 p-14 text-white">
           <Image
-            src="/coreveb-logo-transparent.png"
+            src="/coreveb-logo-dark.png"
             alt="Coreveb"
-            width={931}
-            height={334}
+            width={966}
+            height={280}
             className="h-20 w-auto self-start"
             priority
           />
@@ -226,10 +226,10 @@ export default async function ProposalPage({
           </div>
           <div className="border-t border-white/20 pt-6 text-sm text-teal-100/80">
             <Image
-              src="/coreveb-logo-transparent.png"
+              src="/coreveb-logo-dark.png"
               alt="Coreveb"
-              width={931}
-              height={334}
+              width={966}
+              height={280}
               className="mb-4 h-12 w-auto"
             />
             {site.url.replace("https://", "")} · {site.email}

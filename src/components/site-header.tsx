@@ -14,12 +14,12 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
         <Link href="/" className="flex items-center" aria-label="Coreveb — home">
           <Image
-            src="/coreveb-logo.png"
+            src="/coreveb-logo-dark.png"
             alt="Coreveb — Software & Digital Marketing"
-            width={931}
-            height={334}
+            width={966}
+            height={280}
             priority
-            className="h-10 w-auto mix-blend-screen"
+            className="h-9 w-auto"
           />
         </Link>
 

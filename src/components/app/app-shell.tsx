@@ -46,21 +46,14 @@ export function AppShell({
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center gap-2.5 px-5">
         <Link href="/" className="flex items-center" onClick={() => setOpen(false)}>
-          <span className="relative inline-flex items-center">
-            {/* dark plate behind the wordmark only — keeps white text legible on light theme */}
-            <span
-              aria-hidden
-              className="absolute bottom-[12%] left-[31%] right-0 top-[12%] rounded-lg bg-[#0a0f1c] ring-1 ring-white/10"
-            />
-            <Image
-              src="/coreveb-logo-transparent.png"
-              alt="Coreveb"
-              width={931}
-              height={334}
-              className="relative h-10 w-auto"
-              priority
-            />
-          </span>
+          <Image
+            src={theme === "light" ? "/coreveb-logo-light.png" : "/coreveb-logo-dark.png"}
+            alt="Coreveb"
+            width={966}
+            height={280}
+            className="h-9 w-auto"
+            priority
+          />
         </Link>
         <span className="rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-widest text-muted">
           {area === "Admin" ? "Admin" : "Portal"}

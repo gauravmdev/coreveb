@@ -11,11 +11,11 @@ export function SiteFooter() {
           <div className="max-w-sm">
             <Link href="/" className="inline-flex" aria-label="Coreveb — home">
               <Image
-                src="/coreveb-logo.png"
+                src="/coreveb-logo-dark.png"
                 alt="Coreveb — Software & Digital Marketing"
-                width={931}
-                height={334}
-                className="h-14 w-auto mix-blend-screen"
+                width={966}
+                height={280}
+                className="h-12 w-auto"
               />
             </Link>
             <p className="mt-5 text-sm text-muted">{site.description}</p>
