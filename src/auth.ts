@@ -111,4 +111,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
+  events: {
+    // Promote the admin account AFTER the user is persisted — covers brand-new
+    // OAuth users, where the signIn callback runs before the record exists.
+    async signIn({ user }) {
+      const email = (user.email ?? "").toLowerCase();
+      const adminEmail = (
+        process.env.ADMIN_EMAIL ?? "admin@coreveb.com"
+      ).toLowerCase();
+      if (user.id && email === adminEmail) {
+        await db.update(users).set({ role: "admin" }).where(eq(users.id, user.id));
+      }
+    },
+  },
 });
