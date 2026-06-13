@@ -100,6 +100,66 @@ export const managedSupport = {
   ],
 } as const;
 
+// Illustrative cost comparison: one full-time hire vs the Coreveb team.
+export const costComparison = {
+  headline: "Get 6+ skill areas for less than one in-house salary.",
+  note: "Illustrative monthly figures — actual costs vary by role, seniority, and city.",
+  inHouse: {
+    label: "One full-time hire",
+    sub: "One person, one skill set",
+    rows: [
+      { label: "Senior salary", value: "₹1,20,000" },
+      { label: "Benefits, PF & taxes", value: "₹24,000" },
+      { label: "Recruitment (amortized)", value: "₹8,000" },
+      { label: "Equipment & software", value: "₹10,000" },
+      { label: "Training & overhead", value: "₹8,000" },
+    ],
+    total: "≈ ₹1,70,000/mo",
+    totalNote: "for one role",
+  },
+  coreveb: {
+    label: "Coreveb team",
+    sub: "Software, AI, marketing, security & more",
+    rows: [
+      { label: "Whole multi-skill team", value: "Included" },
+      { label: "Recruitment & payroll", value: "₹0" },
+      { label: "Equipment & tooling", value: "₹0" },
+      { label: "Training & retention", value: "₹0" },
+      { label: "Scale up or down", value: "Anytime" },
+    ],
+    total: "One flat retainer",
+    totalNote: "the whole team",
+  },
+} as const;
+
+// Broader catalog surfaced as a chip cloud under the core expertise.
+export const itServices = [
+  "Cloud & hosting",
+  "DevOps & CI/CD",
+  "Database management",
+  "IT helpdesk",
+  "Network setup",
+  "Backup & recovery",
+  "System migration",
+  "QA & testing",
+  "UI/UX design",
+  "API development",
+  "E-commerce",
+  "CRM & ERP",
+  "Workflow automation",
+  "Performance tuning",
+  "Server management",
+  "Email & workspace",
+  "Security audits",
+  "Monitoring & alerts",
+  "Maintenance & updates",
+  "Tech consulting",
+  "Mobile apps",
+  "Payment integration",
+  "Data & analytics",
+  "Automation scripts",
+] as const;
+
 export const stats = [
   { value: "120+", label: "Products shipped" },
   { value: "40+", label: "Active clients" },
