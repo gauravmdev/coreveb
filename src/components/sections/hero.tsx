@@ -13,7 +13,7 @@ export function Hero() {
 
       <Container className="relative py-28 sm:py-36">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-border bg-surface/50 px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.22em] text-muted backdrop-blur">
+          <div className="anim-fade-up mx-auto inline-flex items-center gap-2 rounded-full border border-border bg-surface/50 px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.22em] text-muted backdrop-blur">
             <span className="relative flex h-1.5 w-1.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
@@ -21,7 +21,10 @@ export function Hero() {
             AI-native product studio
           </div>
 
-          <h1 className="mt-7 text-5xl font-semibold leading-[1.03] tracking-tight text-balance sm:text-6xl">
+          <h1
+            className="anim-fade-up mt-7 text-5xl font-semibold leading-[1.03] tracking-tight text-balance sm:text-6xl"
+            style={{ animationDelay: "0.08s" }}
+          >
             <span className="text-gradient drop-shadow-[0_0_40px_rgba(43,123,255,0.35)]">
               AI-native products,
             </span>
@@ -29,18 +32,27 @@ export function Hero() {
             shipped end to end.
           </h1>
 
-          <p className="mx-auto mt-7 max-w-xl text-lg text-muted text-pretty">
+          <p
+            className="anim-fade-up mx-auto mt-7 max-w-xl text-lg text-muted text-pretty"
+            style={{ animationDelay: "0.16s" }}
+          >
             {site.description}
           </p>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+          <div
+            className="anim-fade-up mt-10 flex flex-wrap items-center justify-center gap-3"
+            style={{ animationDelay: "0.24s" }}
+          >
             <Button href="/contact">Start a project</Button>
             <Button href="/#work" variant="ghost">
               See our work
             </Button>
           </div>
 
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-2">
+          <div
+            className="anim-fade-up mt-12 flex flex-wrap items-center justify-center gap-2"
+            style={{ animationDelay: "0.32s" }}
+          >
             {chips.map((c) => (
               <span
                 key={c}

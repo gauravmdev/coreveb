@@ -159,7 +159,9 @@ export function AppShell({
           </span>
         </header>
 
-        <main className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8">{children}</main>
+        <main key={pathname} className="app-enter mx-auto w-full max-w-6xl px-5 py-8 sm:px-8">
+          {children}
+        </main>
       </div>
     </div>
   );
