@@ -10,6 +10,7 @@ import { Badge } from "@/components/app/badge";
 import { Field, Panel, Submit, inputCls } from "@/components/app/form";
 import { StageTimeline } from "@/components/app/stage-timeline";
 import { MessageThread } from "@/components/app/message-thread";
+import { MarkRead } from "@/components/app/mark-read";
 import {
   MILESTONE_STATUS,
   PROJECT_STATUS,
@@ -214,6 +215,7 @@ export default async function AdminProjectDetail({
       </Panel>
 
       <MessageThread projectId={project.id} messages={thread} meRole="admin" />
+      <MarkRead projectId={project.id} />
     </div>
   );
 }

@@ -13,8 +13,10 @@ import {
   proposalSections,
   quotations,
   quotationItems,
+  threadReads,
   users,
 } from "@/db/schema";
+import type { User } from "@/db/schema";
 
 /* --------------------------------- Portal --------------------------------- */
 
@@ -83,6 +85,89 @@ export function getProjectMessages(projectId: string) {
     .from(messages)
     .where(eq(messages.projectId, projectId))
     .orderBy(messages.createdAt);
+}
+
+export async function getConversations(user: User) {
+  const scope =
+    user.role === "admin"
+      ? sql`true`
+      : eq(messages.companyId, user.companyId ?? "__none__");
+
+  const rows = await db
+    .select({
+      msg: messages,
+      projectName: projects.name,
+      companyName: companies.name,
+    })
+    .from(messages)
+    .leftJoin(projects, eq(messages.projectId, projects.id))
+    .leftJoin(companies, eq(messages.companyId, companies.id))
+    .where(scope)
+    .orderBy(desc(messages.createdAt));
+
+  const reads = await db
+    .select()
+    .from(threadReads)
+    .where(eq(threadReads.userId, user.id));
+  const readMap = new Map(reads.map((r) => [r.projectId, r.lastReadAt.getTime()]));
+
+  const convs = new Map<
+    string,
+    {
+      projectId: string;
+      projectName: string | null;
+      companyName: string | null;
+      last: (typeof rows)[number]["msg"];
+      unread: number;
+    }
+  >();
+
+  for (const r of rows) {
+    const pid = r.msg.projectId;
+    let c = convs.get(pid);
+    if (!c) {
+      c = {
+        projectId: pid,
+        projectName: r.projectName,
+        companyName: r.companyName,
+        last: r.msg,
+        unread: 0,
+      };
+      convs.set(pid, c);
+    }
+    const lastRead = readMap.get(pid) ?? 0;
+    if (r.msg.authorRole !== user.role && r.msg.createdAt.getTime() > lastRead) {
+      c.unread += 1;
+    }
+  }
+
+  return [...convs.values()];
+}
+
+export async function getUnreadTotal(user: User) {
+  const scope =
+    user.role === "admin"
+      ? sql`true`
+      : eq(messages.companyId, user.companyId ?? "__none__");
+
+  const [row] = await db
+    .select({ c: sql<number>`count(*)::int` })
+    .from(messages)
+    .leftJoin(
+      threadReads,
+      and(
+        eq(threadReads.projectId, messages.projectId),
+        eq(threadReads.userId, user.id),
+      ),
+    )
+    .where(
+      and(
+        scope,
+        ne(messages.authorRole, user.role),
+        sql`(${threadReads.lastReadAt} is null or ${messages.createdAt} > ${threadReads.lastReadAt})`,
+      ),
+    );
+  return row?.c ?? 0;
 }
 
 /* ------------------------------- Milestones ------------------------------- */

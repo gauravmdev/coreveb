@@ -8,7 +8,12 @@ import { Icon, type IconName } from "@/components/icons";
 import { signOutAction } from "@/app/auth-actions";
 import type { User } from "@/db/schema";
 
-export type NavItem = { label: string; href: string; icon: IconName };
+export type NavItem = {
+  label: string;
+  href: string;
+  icon: IconName;
+  badge?: number;
+};
 
 export function AppShell({
   user,
@@ -64,6 +69,11 @@ export function AppShell({
                 className={`h-[18px] w-[18px] ${active ? "text-brand-soft" : ""}`}
               />
               {item.label}
+              {item.badge ? (
+                <span className="ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-brand px-1.5 text-[11px] font-semibold text-white">
+                  {item.badge}
+                </span>
+              ) : null}
             </Link>
           );
         })}

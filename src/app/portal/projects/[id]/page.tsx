@@ -10,6 +10,7 @@ import {
 import { Badge } from "@/components/app/badge";
 import { StageTimeline } from "@/components/app/stage-timeline";
 import { MessageThread } from "@/components/app/message-thread";
+import { MarkRead } from "@/components/app/mark-read";
 import { approveStage, requestStageChanges } from "@/app/portal/actions";
 import {
   MILESTONE_STATUS,
@@ -102,6 +103,7 @@ export default async function ProjectDetail({
       </section>
 
       <MessageThread projectId={project.id} messages={thread} meRole="client" />
+      <MarkRead projectId={project.id} />
 
       {milestones.length > 0 && (
         <section className="rounded-2xl border border-border bg-surface/40 p-7">

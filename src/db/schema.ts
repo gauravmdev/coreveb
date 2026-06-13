@@ -249,6 +249,23 @@ export const messages = pgTable("message", {
   createdAt: createdAt(),
 });
 
+/** Tracks the last time a user opened a project's message thread (for unread). */
+export const threadReads = pgTable(
+  "thread_read",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    projectId: text("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    lastReadAt: timestamp("last_read_at", { withTimezone: true })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.projectId] })],
+);
+
 /** Narrative sections of a proposal (Brief, Why us, Scope, Timeline, Terms…). */
 export const proposalSections = pgTable("proposal_section", {
   id: uuid(),
