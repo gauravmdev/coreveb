@@ -10,6 +10,7 @@ import {
   milestones,
   notes,
   projects,
+  proposalSections,
   quotations,
   quotationItems,
   users,
@@ -115,6 +116,14 @@ export function getQuotationItems(quotationId: string) {
 export async function getQuotation(id: string) {
   const [row] = await db.select().from(quotations).where(eq(quotations.id, id)).limit(1);
   return row;
+}
+
+export function getProposalSections(quotationId: string) {
+  return db
+    .select()
+    .from(proposalSections)
+    .where(eq(proposalSections.quotationId, quotationId))
+    .orderBy(proposalSections.position);
 }
 
 export function listQuotations() {

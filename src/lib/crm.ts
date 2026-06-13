@@ -122,10 +122,13 @@ export const TONE_CLASS: Record<Tone, string> = {
 
 /* ------------------------------- Formatting ------------------------------- */
 
-export function formatCurrency(value: number) {
-  return new Intl.NumberFormat("en-US", {
+export const DEFAULT_CURRENCY = "INR";
+
+export function formatCurrency(value: number, currency = DEFAULT_CURRENCY) {
+  const locale = currency === "INR" ? "en-IN" : "en-US";
+  return new Intl.NumberFormat(locale, {
     style: "currency",
-    currency: "USD",
+    currency,
     maximumFractionDigits: 0,
   }).format(value);
 }

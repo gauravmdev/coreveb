@@ -158,9 +158,12 @@ export async function ensureSeed(db: Db) {
       dealId: loyaltyDeal.id,
       number: "QUO-1001",
       title: "Loyalty & Rewards Platform",
+      subtitle: "Design, development & launch — points, tiers & rewards",
+      currency: "INR",
+      taxLabel: "GST",
       status: "sent",
       projectType: "software",
-      taxRate: 8,
+      taxRate: 18,
       terms: "50% on acceptance, balance on launch.",
       validUntil: days(14),
     })
@@ -215,6 +218,33 @@ export async function ensureSeed(db: Db) {
       amount: 9072,
       triggerStageIndex: 4,
       position: 2,
+    },
+  ]);
+
+  await db.insert(schema.proposalSections).values([
+    {
+      quotationId: quote.id,
+      heading: "Understanding the Brief",
+      body: "Northwind Apparel wants to turn one-time shoppers into repeat customers with a loyalty programme that feels effortless. Members earn points on every purchase, climb tiers, and redeem rewards — across web and mobile, tied into the existing storefront.\n\nCoreVeb will design, build, and launch the platform end to end, with a clean admin to run campaigns and a data model ready for future personalisation.",
+      position: 0,
+    },
+    {
+      quotationId: quote.id,
+      heading: "Why CoreVeb",
+      body: "A software & digital product studio that ships consumer-grade products end to end — design, full-stack build, launch and support — under one accountable team.\n\n## What you get\n- A single point of contact and weekly demos\n- Clean, documented, scalable code your team can own\n- Accuracy where it counts: points, tiers and redemptions engineered to be correct and auditable\n- Honest, fixed commercials with a clear milestone schedule",
+      position: 1,
+    },
+    {
+      quotationId: quote.id,
+      heading: "Scope of Work",
+      body: "## Design\n- UX research, user flows and information architecture\n- High-fidelity, accessible UI aligned to your brand\n- Interactive prototype and reusable component library\n\n## Build\n- Points, tiers and rewards engine with full transaction history\n- Member profiles, redemption flows and notifications\n- Secure APIs and role-based admin for campaigns and content\n\n## Launch\n- Functional testing, performance optimisation and analytics\n- Production deployment and handover with documentation",
+      position: 2,
+    },
+    {
+      quotationId: quote.id,
+      heading: "Responsibilities & Terms",
+      body: "## CoreVeb will\n- Reflect your requirements faithfully in design and build\n- Demo progress regularly and keep a clear record of feedback\n- Hand over full source code on completion\n\n## You will\n- Nominate a single decision-maker\n- Provide consolidated feedback within 7 working days per stage\n- Provide brand assets and content\n\n## Terms\n- 30 days of free technical support from delivery\n- Work beyond the defined scope affects the quote and timeline\n- A firm delivery date is confirmed once designs are approved",
+      position: 3,
     },
   ]);
 }

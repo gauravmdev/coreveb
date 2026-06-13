@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   getCompany,
+  getProposalSections,
   getQuotation,
   getQuotationItems,
   getQuotationMilestones,
@@ -18,11 +19,14 @@ import {
   type ProjectType,
 } from "@/lib/crm";
 import {
+  addProposalSection,
   addQuotationItem,
   addQuotationMilestone,
   deleteMilestone,
+  deleteProposalSection,
   deleteQuotationItem,
   setQuotationStatus,
+  updateProposalMeta,
 } from "@/app/admin/actions";
 
 export default async function AdminQuotationDetail({
@@ -42,6 +46,7 @@ export default async function AdminQuotationDetail({
   const schedule = await getQuotationMilestones(id);
   const stages = stagesFor(quote.projectType as ProjectType);
   const scheduled = schedule.reduce((s, m) => s + m.amount, 0);
+  const sections = await getProposalSections(id);
 
   return (
     <div className="space-y-8">
@@ -65,6 +70,13 @@ export default async function AdminQuotationDetail({
             {PROJECT_TYPE_LABEL[quote.projectType as ProjectType]} project on accept
             {quote.validUntil ? ` · Valid until ${formatDate(quote.validUntil)}` : ""}
           </p>
+          <Link
+            href={`/proposals/${quote.id}`}
+            target="_blank"
+            className="mt-3 inline-flex items-center gap-1 rounded-full border border-brand/50 px-4 py-1.5 text-sm font-medium text-brand-soft hover:bg-brand/10"
+          >
+            Open proposal document →
+          </Link>
         </div>
 
         <form action={setQuotationStatus} className="flex items-end gap-2">
@@ -262,6 +274,80 @@ export default async function AdminQuotationDetail({
           <span className="font-medium text-fg">Terms:</span> {quote.terms}
         </p>
       )}
+
+      <Panel title="Proposal document">
+        <p className="mb-4 text-sm text-muted">
+          These become the narrative pages of the printable proposal, alongside
+          the commercial table and payment schedule above. Use{" "}
+          <span className="text-fg">## </span> for a sub-heading and{" "}
+          <span className="text-fg">- </span> at the start of a line for a bullet.
+        </p>
+
+        <form action={updateProposalMeta} className="grid gap-3 sm:grid-cols-[1fr_140px_140px_auto]">
+          <input type="hidden" name="quotationId" value={quote.id} />
+          <Field label="Cover subtitle">
+            <input
+              name="subtitle"
+              defaultValue={quote.subtitle ?? ""}
+              className={inputCls}
+              placeholder="Design, development & store launch"
+            />
+          </Field>
+          <Field label="Currency">
+            <select name="currency" defaultValue={quote.currency} className={inputCls}>
+              <option value="INR">INR ₹</option>
+              <option value="USD">USD $</option>
+              <option value="EUR">EUR €</option>
+              <option value="GBP">GBP £</option>
+            </select>
+          </Field>
+          <Field label="Tax label">
+            <input name="taxLabel" defaultValue={quote.taxLabel} className={inputCls} />
+          </Field>
+          <Submit>Save</Submit>
+        </form>
+
+        <div className="mt-6 space-y-2 border-t border-border pt-6">
+          {sections.map((s) => (
+            <div
+              key={s.id}
+              className="flex items-start justify-between gap-3 rounded-xl border border-border bg-bg/40 p-4"
+            >
+              <div>
+                <div className="font-medium">{s.heading}</div>
+                <div className="mt-1 line-clamp-2 text-xs text-muted">{s.body}</div>
+              </div>
+              <form action={deleteProposalSection}>
+                <input type="hidden" name="sectionId" value={s.id} />
+                <input type="hidden" name="quotationId" value={quote.id} />
+                <button type="submit" className="text-muted hover:text-red-300" aria-label="Remove section">
+                  ✕
+                </button>
+              </form>
+            </div>
+          ))}
+          {sections.length === 0 && (
+            <p className="text-sm text-muted">No sections yet.</p>
+          )}
+        </div>
+
+        <form action={addProposalSection} className="mt-5 space-y-3 border-t border-border pt-5">
+          <input type="hidden" name="quotationId" value={quote.id} />
+          <Field label="Section heading">
+            <input name="heading" required className={inputCls} placeholder="Understanding the Brief" />
+          </Field>
+          <Field label="Section body">
+            <textarea
+              name="body"
+              required
+              rows={5}
+              className={inputCls}
+              placeholder={"Plain paragraphs…\n\n## A sub-heading\n- A bullet point\n- Another bullet"}
+            />
+          </Field>
+          <Submit>Add section</Submit>
+        </form>
+      </Panel>
     </div>
   );
 }

@@ -11,6 +11,7 @@ import {
   milestones,
   notes,
   projects,
+  proposalSections,
   quotations,
   quotationItems,
   users,
@@ -295,6 +296,51 @@ export async function setQuotationStatus(formData: FormData) {
   revalidatePath(`/admin/quotations/${id}`);
   revalidatePath("/admin/quotations");
   revalidatePath("/portal");
+}
+
+/* ------------------------------- Proposal --------------------------------- */
+
+export async function updateProposalMeta(formData: FormData) {
+  await requireAdmin();
+  const id = str(formData.get("quotationId"));
+  if (!id) return;
+  await db
+    .update(quotations)
+    .set({
+      subtitle: str(formData.get("subtitle")) || null,
+      currency: str(formData.get("currency")) || "INR",
+      taxLabel: str(formData.get("taxLabel")) || "GST",
+    })
+    .where(eq(quotations.id, id));
+  revalidatePath(`/admin/quotations/${id}`);
+}
+
+export async function addProposalSection(formData: FormData) {
+  await requireAdmin();
+  const quotationId = str(formData.get("quotationId"));
+  const heading = str(formData.get("heading"));
+  const body = str(formData.get("body"));
+  if (!quotationId || !heading || !body) return;
+  const [row] = await db
+    .select({ c: sql<number>`count(*)::int` })
+    .from(proposalSections)
+    .where(eq(proposalSections.quotationId, quotationId));
+  await db.insert(proposalSections).values({
+    quotationId,
+    heading,
+    body,
+    position: row?.c ?? 0,
+  });
+  revalidatePath(`/admin/quotations/${quotationId}`);
+}
+
+export async function deleteProposalSection(formData: FormData) {
+  await requireAdmin();
+  const id = str(formData.get("sectionId"));
+  const quotationId = str(formData.get("quotationId"));
+  if (!id) return;
+  await db.delete(proposalSections).where(eq(proposalSections.id, id));
+  revalidatePath(`/admin/quotations/${quotationId}`);
 }
 
 /* ---------------------------- Payment milestones -------------------------- */

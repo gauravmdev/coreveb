@@ -265,6 +265,35 @@ body {
   );
 }
 
+/* ---------- Proposal document (print to PDF) ---------- */
+.print-bg {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  html,
+  body {
+    background: #fff;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .proposal-page {
+    break-after: page;
+    box-shadow: none !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+  .proposal-page:last-child {
+    break-after: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .aurora::before,

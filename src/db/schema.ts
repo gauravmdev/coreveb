@@ -173,6 +173,10 @@ export const quotations = pgTable("quotation", {
   dealId: text("deal_id").references(() => deals.id, { onDelete: "set null" }),
   number: text("number").notNull(),
   title: text("title").notNull(),
+  // Proposal cover subtitle, e.g. "Design, development & store launch".
+  subtitle: text("subtitle"),
+  currency: text("currency").notNull().default("INR"),
+  taxLabel: text("tax_label").notNull().default("GST"),
   status: text("status", {
     enum: ["draft", "sent", "accepted", "declined", "expired"],
   })
@@ -245,6 +249,17 @@ export const messages = pgTable("message", {
   createdAt: createdAt(),
 });
 
+/** Narrative sections of a proposal (Brief, Why us, Scope, Timeline, Terms…). */
+export const proposalSections = pgTable("proposal_section", {
+  id: uuid(),
+  quotationId: text("quotation_id")
+    .notNull()
+    .references(() => quotations.id, { onDelete: "cascade" }),
+  heading: text("heading").notNull(),
+  body: text("body").notNull(),
+  position: integer("position").notNull().default(0),
+});
+
 export type User = typeof users.$inferSelect;
 export type Company = typeof companies.$inferSelect;
 export type Project = typeof projects.$inferSelect;
@@ -255,3 +270,4 @@ export type Quotation = typeof quotations.$inferSelect;
 export type QuotationItem = typeof quotationItems.$inferSelect;
 export type Milestone = typeof milestones.$inferSelect;
 export type Message = typeof messages.$inferSelect;
+export type ProposalSection = typeof proposalSections.$inferSelect;

@@ -54,6 +54,13 @@ export default async function PortalQuotations() {
                     {PROJECT_TYPE_LABEL[quote.projectType as ProjectType]} project
                     {quote.validUntil ? ` · Valid until ${formatDate(quote.validUntil)}` : ""}
                   </p>
+                  <Link
+                    href={`/proposals/${quote.id}`}
+                    target="_blank"
+                    className="mt-2 inline-block text-sm font-medium text-brand-soft hover:underline"
+                  >
+                    View full proposal →
+                  </Link>
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-semibold tracking-tight">
