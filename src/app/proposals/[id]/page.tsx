@@ -58,16 +58,14 @@ export default async function ProposalPage({
       <article className="mx-auto max-w-[820px] bg-white text-slate-800 shadow-xl">
         {/* ---------- Cover ---------- */}
         <section className="proposal-page print-bg flex h-[1120px] flex-col justify-between overflow-hidden bg-gradient-to-br from-teal-900 to-teal-700 p-14 text-white">
-          <span className="print-bg inline-block w-fit self-start rounded-2xl bg-[#0a0f1c] px-4 py-3 shadow-sm ring-1 ring-white/10">
-            <Image
-              src="/coreveb-logo.png"
-              alt="Coreveb"
-              width={931}
-              height={334}
-              className="h-16 w-auto mix-blend-screen"
-              priority
-            />
-          </span>
+          <Image
+            src="/coreveb-logo-transparent.png"
+            alt="Coreveb"
+            width={931}
+            height={334}
+            className="h-20 w-auto self-start"
+            priority
+          />
 
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-teal-200">
@@ -227,15 +225,13 @@ export default async function ProposalPage({
             </p>
           </div>
           <div className="border-t border-white/20 pt-6 text-sm text-teal-100/80">
-            <span className="print-bg mb-4 inline-block w-fit rounded-xl bg-[#0a0f1c] px-3 py-2 shadow-sm ring-1 ring-white/10">
-              <Image
-                src="/coreveb-logo.png"
-                alt="Coreveb"
-                width={931}
-                height={334}
-                className="h-11 w-auto mix-blend-screen"
-              />
-            </span>
+            <Image
+              src="/coreveb-logo-transparent.png"
+              alt="Coreveb"
+              width={931}
+              height={334}
+              className="mb-4 h-12 w-auto"
+            />
             {site.url.replace("https://", "")} · {site.email}
           </div>
         </section>

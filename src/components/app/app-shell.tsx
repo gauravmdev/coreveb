@@ -45,14 +45,20 @@ export function AppShell({
   const sidebar = (
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center gap-2.5 px-5">
-        <Link href="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
-          <span className="rounded-xl bg-gradient-to-br from-[#0a0f1c] to-[#172a4a] px-2.5 py-1.5 shadow-sm ring-1 ring-white/10">
+        <Link href="/" className="flex items-center" onClick={() => setOpen(false)}>
+          <span className="relative inline-flex items-center">
+            {/* dark plate behind the wordmark only — keeps white text legible on light theme */}
+            <span
+              aria-hidden
+              className="absolute bottom-[12%] left-[31%] right-0 top-[12%] rounded-lg bg-[#0a0f1c] ring-1 ring-white/10"
+            />
             <Image
-              src="/coreveb-logo.png"
+              src="/coreveb-logo-transparent.png"
               alt="Coreveb"
               width={931}
               height={334}
-              className="h-8 w-auto mix-blend-screen"
+              className="relative h-10 w-auto"
+              priority
             />
           </span>
         </Link>
