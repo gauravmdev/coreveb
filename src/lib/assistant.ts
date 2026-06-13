@@ -291,6 +291,138 @@ export const KB: KbEntry[] = [
     related: ["deals-pipeline", "stage-billing"],
   },
 
+  // ---- Admin how-tos -----------------------------------------------------
+  {
+    id: "quote-build-items",
+    audience: "admin",
+    category: "Quotations",
+    question: "How do I add line items and milestones to a quotation?",
+    keywords: [
+      "line item", "line items", "add items", "quote items", "milestone",
+      "milestones", "add milestone", "build quote", "pricing", "quote detail",
+    ],
+    answer:
+      "Open the quotation to reach its detail page. There you can:\n- Add line items — a description, quantity, and unit price; the subtotal, GST, and total update as you go.\n- Add milestones — an amount plus the project stage that triggers its invoice. This is what sets up stage-based billing.\n\nYou can remove any item or milestone too. Once the items look right, set the status to Sent.",
+    related: ["send-quote-status", "stage-billing", "proposal-build"],
+  },
+  {
+    id: "send-quote-status",
+    audience: "admin",
+    category: "Quotations",
+    question: "How do I send a quote or change its status?",
+    keywords: [
+      "send quote", "mark sent", "status", "quote status", "draft", "sent",
+      "publish quote", "make available", "change status",
+    ],
+    answer:
+      "Use the status control on the quotation's detail page. Move it from Draft to Sent once the line items and milestones are ready — that makes it visible for the client to review and accept in their portal.\n\nYou can also mark it Accepted or Declined manually, but normally the client does that themselves, which auto-creates the project.",
+    related: ["quote-build-items", "quote-accepted-admin", "quote-to-project"],
+  },
+  {
+    id: "proposal-build",
+    audience: "admin",
+    category: "Quotations",
+    question: "How do I build and customize the proposal document?",
+    keywords: [
+      "proposal", "sections", "build proposal", "customize proposal", "cover",
+      "proposal section", "document", "presentation", "format proposal",
+    ],
+    answer:
+      "On the quotation's detail page you can edit the proposal: update its meta (title, intro, terms) and add or remove proposal sections to tell the story around the pricing.\n\nWhen it's ready, open the proposal view (/proposals) — it renders as a polished document with your sections, INR pricing, and GST. Use the browser's Print → Save as PDF to share it.",
+    related: ["what-is-proposal", "quote-build-items"],
+  },
+  {
+    id: "quote-accepted-admin",
+    audience: "admin",
+    category: "Quotations",
+    question: "How do I know when a client accepts or responds to a quote?",
+    keywords: [
+      "client accepted", "accepted", "responded", "notified", "know when accept",
+      "declined", "response", "quote response",
+    ],
+    answer:
+      "When a client acts on a quote, its status updates to Accepted (or Declined), and on accept a project is created automatically and shows up under Projects.\n\nThe Overview also tracks pending quotes, and any client replies arrive in Messages with an unread badge — so the dashboard and inbox are where you'll spot responses.",
+    related: ["admin-overview", "send-quote-status", "send-message-admin"],
+  },
+  {
+    id: "milestone-invoice-admin",
+    audience: "admin",
+    category: "Billing",
+    question: "How are milestone invoices generated — automatically or manually?",
+    keywords: [
+      "milestone invoice", "generate invoice", "auto invoice", "trigger invoice",
+      "raise milestone", "stage invoice", "manual invoice",
+    ],
+    answer:
+      "When a project reaches a milestone's trigger stage, that milestone's invoice is raised automatically.\n\nIf you need to bill ahead of schedule, you can also generate a milestone's invoice manually from the project's detail page. Either way it lands in Invoices, where you set it Paid once payment clears.",
+    related: ["stage-billing", "raise-invoice-admin", "manage-project-admin"],
+  },
+  {
+    id: "manage-project-admin",
+    audience: "admin",
+    category: "Projects",
+    question: "How do I update a project's stage or put it on hold?",
+    keywords: [
+      "update project", "change stage", "stage", "on hold", "pause project",
+      "complete project", "cancel project", "project status", "progress",
+    ],
+    answer:
+      "On the Projects page each project has controls to set its current stage and its status — Active, On hold, Completed, or Cancelled.\n\nFor stage sign-offs, open the project's detail page to request approval from the client (which advances it on their OK) or to generate a milestone invoice.",
+    related: ["advance-stage-admin", "milestone-invoice-admin", "create-project-admin"],
+  },
+  {
+    id: "create-project-admin",
+    audience: "admin",
+    category: "Projects",
+    question: "Can I create a project without a quotation?",
+    keywords: [
+      "create project", "new project", "add project", "manual project",
+      "without quote", "start project", "make project",
+    ],
+    answer:
+      "Yes. Projects are usually created automatically when a client accepts a quotation, but you can also create one directly from a client's profile page (Clients → open the client) — pick the type and it starts at the first stage.\n\nUse the quote route when there's pricing to agree; create directly for work that's already settled.",
+    related: ["client-profile-admin", "quote-to-project", "manage-project-admin"],
+  },
+  {
+    id: "client-profile-admin",
+    audience: "admin",
+    category: "CRM",
+    question: "What can I do from a client's profile page?",
+    keywords: [
+      "client profile", "client page", "client detail", "open client", "company page",
+      "notes", "internal note", "portal access", "link user", "give access",
+    ],
+    answer:
+      "Open a client from Clients to reach their profile, where you can:\n- Create a project for them directly\n- Add internal notes (private to your team — clients never see these)\n- Link a user account to the company, which is what gives that person portal access\n\nIt's the hub for everything tied to that company.",
+    related: ["create-project-admin", "clients-admin", "data-security"],
+  },
+  {
+    id: "move-deal-admin",
+    audience: "admin",
+    category: "CRM",
+    question: "How do I move a deal or mark it won or lost?",
+    keywords: [
+      "move deal", "deal stage", "won", "lost", "advance deal", "update deal",
+      "pipeline stage", "close deal", "mark won",
+    ],
+    answer:
+      "On the Deals page, use the stage control on each deal to move it along (Lead → … → Won/Lost) — the open-pipeline total updates as deals change stage.\n\nWhen a deal is ready to price, link it to a new quotation; the client accepting that quote is what effectively closes it as Won and spins up the project.",
+    related: ["deals-pipeline", "deal-vs-quote", "create-quote-admin"],
+  },
+  {
+    id: "attach-in-message-admin",
+    audience: "admin",
+    category: "Messaging",
+    question: "How do I attach a quote, invoice, or approval to a message?",
+    keywords: [
+      "attach", "action card", "send quote in chat", "attach invoice", "approval card",
+      "composer", "inline", "attach approval", "send card",
+    ],
+    answer:
+      "In a client's Messages thread, the composer lets you attach a quote, an invoice, or a stage-approval request as an action card right in the conversation.\n\nThe client can then act on it inline — accept the quote, view the invoice, or approve the stage — without hunting through separate pages.",
+    related: ["send-message-admin", "messaging-actionable", "advance-stage-admin"],
+  },
+
   // ---- Working with us ---------------------------------------------------
   {
     id: "project-timeline",
@@ -443,9 +575,11 @@ export const STARTERS: Record<Audience, string[]> = {
   admin: [
     "What's the difference between a deal and a quotation?",
     "How do I create and send a quotation?",
-    "How does milestone billing work?",
+    "How do I add line items and milestones to a quote?",
+    "How are milestone invoices generated?",
     "How do I request a client sign-off?",
     "How do I generate a PDF proposal?",
+    "How do I update a project's stage or put it on hold?",
     "How do deals and the pipeline work?",
   ],
 };
