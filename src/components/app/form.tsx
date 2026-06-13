@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 export const inputCls =
-  "w-full rounded-lg border border-border bg-bg px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted/60 focus:border-brand/60";
+  "w-full rounded-lg border border-border bg-bg px-3 py-2.5 text-sm outline-none transition-all placeholder:text-muted/60 focus:border-brand focus:ring-2 focus:ring-brand/20";
 
 export function Field({
   label,
@@ -22,7 +22,7 @@ export function Submit({ children = "Save" }: { children?: ReactNode }) {
   return (
     <button
       type="submit"
-      className="sheen rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white shadow-glow transition-colors hover:bg-brand-soft"
+      className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-soft active:bg-brand"
     >
       {children}
     </button>
@@ -37,7 +37,7 @@ export function Panel({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-border bg-surface/40 p-6">
+    <section className="rounded-2xl border border-border bg-surface/70 p-6 shadow-sm">
       {title && <h2 className="mb-4 text-lg font-semibold">{title}</h2>}
       {children}
     </section>

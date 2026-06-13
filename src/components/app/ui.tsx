@@ -54,9 +54,9 @@ export function MetricCard({
     </>
   );
   const cls =
-    "block rounded-2xl border border-border bg-surface/50 p-5 transition-colors";
+    "block rounded-2xl border border-border bg-surface/70 p-5 shadow-sm transition-all";
   return href ? (
-    <Link href={href} className={`${cls} hover:border-brand/40`}>
+    <Link href={href} className={`${cls} hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-md`}>
       {inner}
     </Link>
   ) : (
@@ -82,10 +82,10 @@ export function AttentionCard({
   return (
     <Link
       href={href}
-      className={`flex items-center gap-4 rounded-2xl border p-5 transition-all ${
+      className={`flex items-center gap-4 rounded-2xl border p-5 shadow-sm transition-all ${
         active
-          ? "border-brand/40 bg-brand/[0.07] hover:-translate-y-0.5"
-          : "border-border bg-surface/40 hover:border-border"
+          ? "border-brand/40 bg-brand/[0.07] hover:-translate-y-0.5 hover:shadow-md"
+          : "border-border bg-surface/70 hover:border-brand/30"
       }`}
     >
       <span
