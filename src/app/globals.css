@@ -36,6 +36,8 @@
   --color-border: #c2cad8;
   --color-fg: #0d1322;
   --color-muted: #4a5468;
+  /* Darker accent so links/labels read on white. */
+  --color-brand-soft: #2563eb;
 }
 
 /* ---------- Theme-aware status badges (readable in both modes) ---------- */
