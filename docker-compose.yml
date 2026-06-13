@@ -1,0 +1,24 @@
+# Local development Postgres. Start with `bun run db:up`, then `bun run db:migrate`.
+# In production, use a managed/Dokploy Postgres service instead of this.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: coreveb-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: coreveb
+      POSTGRES_PASSWORD: coreveb
+      POSTGRES_DB: coreveb
+    ports:
+      # Host 55432 to avoid clashing with other local Postgres instances.
+      - "55432:5432"
+    volumes:
+      - coreveb_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U coreveb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  coreveb_pgdata:

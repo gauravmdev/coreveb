@@ -1,10 +1,12 @@
 import "server-only";
 import { and, desc, eq, ne, sql } from "drizzle-orm";
+import type { PgTable } from "drizzle-orm/pg-core";
 import { db } from "@/db";
 import {
   companies,
   deals,
   invoices,
+  milestones,
   notes,
   projects,
   quotations,
@@ -14,8 +16,13 @@ import {
 
 /* --------------------------------- Portal --------------------------------- */
 
-export function getCompany(companyId: string) {
-  return db.select().from(companies).where(eq(companies.id, companyId)).get();
+export async function getCompany(companyId: string) {
+  const [row] = await db
+    .select()
+    .from(companies)
+    .where(eq(companies.id, companyId))
+    .limit(1);
+  return row;
 }
 
 export function getCompanyProjects(companyId: string) {
@@ -23,12 +30,12 @@ export function getCompanyProjects(companyId: string) {
     .select()
     .from(projects)
     .where(eq(projects.companyId, companyId))
-    .orderBy(desc(projects.createdAt))
-    .all();
+    .orderBy(desc(projects.createdAt));
 }
 
-export function getProject(id: string) {
-  return db.select().from(projects).where(eq(projects.id, id)).get();
+export async function getProject(id: string) {
+  const [row] = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
+  return row;
 }
 
 export function getCompanyInvoices(companyId: string) {
@@ -36,8 +43,7 @@ export function getCompanyInvoices(companyId: string) {
     .select()
     .from(invoices)
     .where(eq(invoices.companyId, companyId))
-    .orderBy(desc(invoices.issuedAt))
-    .all();
+    .orderBy(desc(invoices.issuedAt));
 }
 
 export function getClientNotes(companyId: string) {
@@ -45,19 +51,18 @@ export function getClientNotes(companyId: string) {
     .select()
     .from(notes)
     .where(and(eq(notes.companyId, companyId), eq(notes.visibleToClient, true)))
-    .orderBy(desc(notes.createdAt))
-    .all();
+    .orderBy(desc(notes.createdAt));
 }
 
 export function getProjectNotes(projectId: string, onlyClientVisible = false) {
   const where = onlyClientVisible
     ? and(eq(notes.projectId, projectId), eq(notes.visibleToClient, true))
     : eq(notes.projectId, projectId);
-  return db.select().from(notes).where(where).orderBy(desc(notes.createdAt)).all();
+  return db.select().from(notes).where(where).orderBy(desc(notes.createdAt));
 }
 
 export function getCompanyUsers(companyId: string) {
-  return db.select().from(users).where(eq(users.companyId, companyId)).all();
+  return db.select().from(users).where(eq(users.companyId, companyId));
 }
 
 export function getCompanyNotes(companyId: string) {
@@ -65,26 +70,83 @@ export function getCompanyNotes(companyId: string) {
     .select()
     .from(notes)
     .where(eq(notes.companyId, companyId))
-    .orderBy(desc(notes.createdAt))
-    .all();
+    .orderBy(desc(notes.createdAt));
+}
+
+/* ------------------------------- Milestones ------------------------------- */
+
+export function getQuotationMilestones(quotationId: string) {
+  return db
+    .select()
+    .from(milestones)
+    .where(eq(milestones.quotationId, quotationId))
+    .orderBy(milestones.position);
+}
+
+export function getProjectMilestones(projectId: string) {
+  return db
+    .select()
+    .from(milestones)
+    .where(eq(milestones.projectId, projectId))
+    .orderBy(milestones.position);
+}
+
+/* ------------------------------- Quotations ------------------------------- */
+
+export function getQuotationItems(quotationId: string) {
+  return db
+    .select()
+    .from(quotationItems)
+    .where(eq(quotationItems.quotationId, quotationId))
+    .orderBy(quotationItems.position);
+}
+
+export async function getQuotation(id: string) {
+  const [row] = await db.select().from(quotations).where(eq(quotations.id, id)).limit(1);
+  return row;
+}
+
+export function listQuotations() {
+  return db
+    .select({ quote: quotations, companyName: companies.name })
+    .from(quotations)
+    .leftJoin(companies, eq(quotations.companyId, companies.id))
+    .orderBy(desc(quotations.createdAt));
+}
+
+export function getCompanyQuotations(companyId: string) {
+  return db
+    .select()
+    .from(quotations)
+    .where(and(eq(quotations.companyId, companyId), ne(quotations.status, "draft")))
+    .orderBy(desc(quotations.createdAt));
+}
+
+export async function quotationTotals() {
+  const rows = await db
+    .select({
+      quotationId: quotationItems.quotationId,
+      subtotal: sql<number>`coalesce(sum(${quotationItems.quantity} * ${quotationItems.unitPrice}), 0)::float8`,
+    })
+    .from(quotationItems)
+    .groupBy(quotationItems.quotationId);
+  const map = new Map<string, number>();
+  for (const r of rows) map.set(r.quotationId, r.subtotal);
+  return map;
 }
 
 /* --------------------------------- Admin ---------------------------------- */
 
 export function listCompanies() {
-  return db.select().from(companies).orderBy(desc(companies.createdAt)).all();
+  return db.select().from(companies).orderBy(desc(companies.createdAt));
 }
 
 export function listProjectsWithCompany() {
   return db
-    .select({
-      project: projects,
-      companyName: companies.name,
-    })
+    .select({ project: projects, companyName: companies.name })
     .from(projects)
     .leftJoin(companies, eq(projects.companyId, companies.id))
-    .orderBy(desc(projects.createdAt))
-    .all();
+    .orderBy(desc(projects.createdAt));
 }
 
 export function listDeals() {
@@ -92,8 +154,7 @@ export function listDeals() {
     .select({ deal: deals, companyName: companies.name })
     .from(deals)
     .leftJoin(companies, eq(deals.companyId, companies.id))
-    .orderBy(desc(deals.createdAt))
-    .all();
+    .orderBy(desc(deals.createdAt));
 }
 
 export function listInvoicesWithRefs() {
@@ -106,96 +167,39 @@ export function listInvoicesWithRefs() {
     .from(invoices)
     .leftJoin(companies, eq(invoices.companyId, companies.id))
     .leftJoin(projects, eq(invoices.projectId, projects.id))
-    .orderBy(desc(invoices.issuedAt))
-    .all();
+    .orderBy(desc(invoices.issuedAt));
 }
 
-/* ------------------------------- Quotations ------------------------------- */
-
-export function getQuotationItems(quotationId: string) {
-  return db
-    .select()
-    .from(quotationItems)
-    .where(eq(quotationItems.quotationId, quotationId))
-    .orderBy(quotationItems.position)
-    .all();
-}
-
-export function getQuotation(id: string) {
-  return db.select().from(quotations).where(eq(quotations.id, id)).get();
-}
-
-export function listQuotations() {
-  return db
-    .select({ quote: quotations, companyName: companies.name })
-    .from(quotations)
-    .leftJoin(companies, eq(quotations.companyId, companies.id))
-    .orderBy(desc(quotations.createdAt))
-    .all();
-}
-
-export function getCompanyQuotations(companyId: string) {
-  return db
-    .select()
-    .from(quotations)
-    .where(and(eq(quotations.companyId, companyId), ne(quotations.status, "draft")))
-    .orderBy(desc(quotations.createdAt))
-    .all();
-}
-
-/** quotationId -> total amount (incl. tax), for list views. */
-export function quotationTotals() {
-  const rows = db
-    .select({
-      quotationId: quotationItems.quotationId,
-      subtotal: sql<number>`coalesce(sum(${quotationItems.quantity} * ${quotationItems.unitPrice}), 0)`,
-    })
-    .from(quotationItems)
-    .groupBy(quotationItems.quotationId)
-    .all();
-  const map = new Map<string, number>();
-  for (const r of rows) map.set(r.quotationId, r.subtotal);
-  return map;
-}
-
-function count(
-  table:
-    | typeof companies
-    | typeof projects
-    | typeof deals
-    | typeof invoices
-    | typeof quotations,
-) {
-  const row = db.select({ c: sql<number>`count(*)` }).from(table).get();
+async function count(table: PgTable) {
+  const [row] = await db.select({ c: sql<number>`count(*)::int` }).from(table);
   return row?.c ?? 0;
 }
 
-export function getAdminOverview() {
-  const openInvoices = db
-    .select({ total: sql<number>`coalesce(sum(${invoices.amount}), 0)` })
+export async function getAdminOverview() {
+  const [openInvoices] = await db
+    .select({
+      total: sql<number>`coalesce(sum(${invoices.amount}), 0)::float8`,
+    })
     .from(invoices)
-    .where(sql`${invoices.status} in ('sent','overdue')`)
-    .get();
+    .where(sql`${invoices.status} in ('sent','overdue')`);
 
-  const wonValue = db
-    .select({ total: sql<number>`coalesce(sum(${deals.value}), 0)` })
+  const [wonValue] = await db
+    .select({ total: sql<number>`coalesce(sum(${deals.value}), 0)::float8` })
     .from(deals)
-    .where(eq(deals.stage, "won"))
-    .get();
+    .where(eq(deals.stage, "won"));
 
-  const pendingQuotes = db
-    .select({ c: sql<number>`count(*)` })
+  const [pendingQuotes] = await db
+    .select({ c: sql<number>`count(*)::int` })
     .from(quotations)
-    .where(eq(quotations.status, "sent"))
-    .get();
+    .where(eq(quotations.status, "sent"));
 
   return {
-    companies: count(companies),
-    projects: count(projects),
-    deals: count(deals),
-    quotations: count(quotations),
+    companies: await count(companies),
+    projects: await count(projects),
+    deals: await count(deals),
+    quotations: await count(quotations),
     pendingQuotes: pendingQuotes?.c ?? 0,
-    invoices: count(invoices),
+    invoices: await count(invoices),
     outstanding: openInvoices?.total ?? 0,
     wonValue: wonValue?.total ?? 0,
   };
@@ -207,6 +211,5 @@ export function listRecentNotes(limit = 8) {
     .from(notes)
     .leftJoin(companies, eq(notes.companyId, companies.id))
     .orderBy(desc(notes.createdAt))
-    .limit(limit)
-    .all();
+    .limit(limit);
 }

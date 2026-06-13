@@ -12,7 +12,7 @@ import {
 import { updateProjectProgress } from "@/app/admin/actions";
 
 export default async function AdminProjects() {
-  const rows = listProjectsWithCompany();
+  const rows = await listProjectsWithCompany();
 
   return (
     <div className="space-y-8">
@@ -74,10 +74,10 @@ export default async function AdminProjects() {
                 </label>
                 <Submit>Update progress</Submit>
                 <Link
-                  href={`/admin/clients/${p.companyId}`}
-                  className="text-sm text-muted hover:text-fg"
+                  href={`/admin/projects/${p.id}`}
+                  className="text-sm text-brand-soft hover:underline"
                 >
-                  Open client →
+                  Milestones & billing →
                 </Link>
               </form>
             </Panel>

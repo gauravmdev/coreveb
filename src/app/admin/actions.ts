@@ -2,12 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { eq } from "drizzle-orm";
+import { eq, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import {
   companies,
   deals,
   invoices,
+  milestones,
   notes,
   projects,
   quotations,
@@ -20,6 +21,11 @@ import {
   nextItemPosition,
   nextQuoteNumber,
 } from "@/lib/quotations";
+import {
+  invoiceMilestone,
+  releaseMilestones,
+  syncMilestoneForInvoice,
+} from "@/lib/billing";
 
 const str = (v: FormDataEntryValue | null) => String(v ?? "").trim();
 const num = (v: FormDataEntryValue | null) => {
@@ -30,6 +36,12 @@ const date = (v: FormDataEntryValue | null) => {
   const s = str(v);
   return s ? new Date(s) : null;
 };
+const intOrNull = (v: FormDataEntryValue | null) => {
+  const s = str(v);
+  if (s === "") return null;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : null;
+};
 
 /* ------------------------------- Companies -------------------------------- */
 
@@ -37,7 +49,7 @@ export async function createCompany(formData: FormData) {
   await requireAdmin();
   const name = str(formData.get("name"));
   if (!name) return;
-  const company = db
+  const [company] = await db
     .insert(companies)
     .values({
       name,
@@ -46,8 +58,7 @@ export async function createCompany(formData: FormData) {
       contactName: str(formData.get("contactName")) || null,
       contactEmail: str(formData.get("contactEmail")) || null,
     })
-    .returning()
-    .get();
+    .returning();
   revalidatePath("/admin/clients");
   redirect(`/admin/clients/${company.id}`);
 }
@@ -58,13 +69,13 @@ export async function linkUser(formData: FormData) {
   const email = str(formData.get("email")).toLowerCase();
   if (!companyId || !email.includes("@")) return;
 
-  const existing = db.select().from(users).where(eq(users.email, email)).get();
+  const [existing] = await db.select().from(users).where(eq(users.email, email)).limit(1);
   if (existing) {
-    db.update(users).set({ companyId }).where(eq(users.id, existing.id)).run();
+    await db.update(users).set({ companyId }).where(eq(users.id, existing.id));
   } else {
-    db.insert(users)
-      .values({ email, name: email.split("@")[0], role: "client", companyId })
-      .run();
+    await db
+      .insert(users)
+      .values({ email, name: email.split("@")[0], role: "client", companyId });
   }
   revalidatePath(`/admin/clients/${companyId}`);
 }
@@ -82,16 +93,14 @@ export async function createProject(formData: FormData) {
     | "marketing";
   if (!companyId || !name || !type) return;
 
-  db.insert(projects)
-    .values({
-      companyId,
-      name,
-      type,
-      description: str(formData.get("description")) || null,
-      startedAt: date(formData.get("startedAt")) ?? new Date(),
-      targetDate: date(formData.get("targetDate")),
-    })
-    .run();
+  await db.insert(projects).values({
+    companyId,
+    name,
+    type,
+    description: str(formData.get("description")) || null,
+    startedAt: date(formData.get("startedAt")) ?? new Date(),
+    targetDate: date(formData.get("targetDate")),
+  });
   revalidatePath("/admin/projects");
   revalidatePath(`/admin/clients/${companyId}`);
 }
@@ -106,11 +115,10 @@ export async function updateProjectProgress(formData: FormData) {
     | "on_hold"
     | "completed"
     | "cancelled";
-  db.update(projects)
-    .set({ stageIndex, status })
-    .where(eq(projects.id, id))
-    .run();
+  await db.update(projects).set({ stageIndex, status }).where(eq(projects.id, id));
+  await releaseMilestones(id, stageIndex);
   revalidatePath("/admin/projects");
+  revalidatePath(`/admin/projects/${id}`);
   revalidatePath("/portal");
 }
 
@@ -120,21 +128,19 @@ export async function createDeal(formData: FormData) {
   await requireAdmin();
   const title = str(formData.get("title"));
   if (!title) return;
-  db.insert(deals)
-    .values({
-      title,
-      companyId: str(formData.get("companyId")) || null,
-      contactName: str(formData.get("contactName")) || null,
-      contactEmail: str(formData.get("contactEmail")) || null,
-      value: num(formData.get("value")),
-      stage: (str(formData.get("stage")) || "lead") as
-        | "lead"
-        | "qualified"
-        | "proposal"
-        | "won"
-        | "lost",
-    })
-    .run();
+  await db.insert(deals).values({
+    title,
+    companyId: str(formData.get("companyId")) || null,
+    contactName: str(formData.get("contactName")) || null,
+    contactEmail: str(formData.get("contactEmail")) || null,
+    value: num(formData.get("value")),
+    stage: (str(formData.get("stage")) || "lead") as
+      | "lead"
+      | "qualified"
+      | "proposal"
+      | "won"
+      | "lost",
+  });
   revalidatePath("/admin/deals");
 }
 
@@ -148,7 +154,7 @@ export async function setDealStage(formData: FormData) {
     | "won"
     | "lost";
   if (!id || !stage) return;
-  db.update(deals).set({ stage }).where(eq(deals.id, id)).run();
+  await db.update(deals).set({ stage }).where(eq(deals.id, id));
   revalidatePath("/admin/deals");
 }
 
@@ -159,21 +165,19 @@ export async function createInvoice(formData: FormData) {
   const companyId = str(formData.get("companyId"));
   const number = str(formData.get("number"));
   if (!companyId || !number) return;
-  db.insert(invoices)
-    .values({
-      companyId,
-      projectId: str(formData.get("projectId")) || null,
-      number,
-      amount: num(formData.get("amount")),
-      status: (str(formData.get("status")) || "draft") as
-        | "draft"
-        | "sent"
-        | "paid"
-        | "overdue",
-      issuedAt: date(formData.get("issuedAt")) ?? new Date(),
-      dueAt: date(formData.get("dueAt")),
-    })
-    .run();
+  await db.insert(invoices).values({
+    companyId,
+    projectId: str(formData.get("projectId")) || null,
+    number,
+    amount: num(formData.get("amount")),
+    status: (str(formData.get("status")) || "draft") as
+      | "draft"
+      | "sent"
+      | "paid"
+      | "overdue",
+    issuedAt: date(formData.get("issuedAt")) ?? new Date(),
+    dueAt: date(formData.get("dueAt")),
+  });
   revalidatePath("/admin/invoices");
 }
 
@@ -186,7 +190,8 @@ export async function setInvoiceStatus(formData: FormData) {
     | "paid"
     | "overdue";
   if (!id || !status) return;
-  db.update(invoices).set({ status }).where(eq(invoices.id, id)).run();
+  await db.update(invoices).set({ status }).where(eq(invoices.id, id));
+  await syncMilestoneForInvoice(id, status);
   revalidatePath("/admin/invoices");
   revalidatePath("/portal");
 }
@@ -199,12 +204,12 @@ export async function createQuotation(formData: FormData) {
   const title = str(formData.get("title"));
   if (!companyId || !title) return;
 
-  const quote = db
+  const [quote] = await db
     .insert(quotations)
     .values({
       companyId,
       title,
-      number: nextQuoteNumber(),
+      number: await nextQuoteNumber(),
       projectType: (str(formData.get("projectType")) || "web") as
         | "software"
         | "web"
@@ -215,8 +220,7 @@ export async function createQuotation(formData: FormData) {
       terms: str(formData.get("terms")) || null,
       validUntil: date(formData.get("validUntil")),
     })
-    .returning()
-    .get();
+    .returning();
   redirect(`/admin/quotations/${quote.id}`);
 }
 
@@ -225,15 +229,13 @@ export async function addQuotationItem(formData: FormData) {
   const quotationId = str(formData.get("quotationId"));
   const description = str(formData.get("description"));
   if (!quotationId || !description) return;
-  db.insert(quotationItems)
-    .values({
-      quotationId,
-      description,
-      quantity: num(formData.get("quantity")) || 1,
-      unitPrice: num(formData.get("unitPrice")),
-      position: nextItemPosition(quotationId),
-    })
-    .run();
+  await db.insert(quotationItems).values({
+    quotationId,
+    description,
+    quantity: num(formData.get("quantity")) || 1,
+    unitPrice: num(formData.get("unitPrice")),
+    position: await nextItemPosition(quotationId),
+  });
   revalidatePath(`/admin/quotations/${quotationId}`);
 }
 
@@ -242,7 +244,7 @@ export async function deleteQuotationItem(formData: FormData) {
   const id = str(formData.get("itemId"));
   const quotationId = str(formData.get("quotationId"));
   if (!id) return;
-  db.delete(quotationItems).where(eq(quotationItems.id, id)).run();
+  await db.delete(quotationItems).where(eq(quotationItems.id, id));
   revalidatePath(`/admin/quotations/${quotationId}`);
 }
 
@@ -253,17 +255,91 @@ export async function setQuotationStatus(formData: FormData) {
   if (!id || !status) return;
 
   if (status === "accepted") {
-    applyAcceptance(id, admin.name ?? "Coreveb");
+    await applyAcceptance(id, admin.name ?? "Coreveb");
   } else {
-    db.update(quotations)
-      .set({
-        status: status as "draft" | "sent" | "declined" | "expired",
-      })
-      .where(eq(quotations.id, id))
-      .run();
+    await db
+      .update(quotations)
+      .set({ status: status as "draft" | "sent" | "declined" | "expired" })
+      .where(eq(quotations.id, id));
   }
   revalidatePath(`/admin/quotations/${id}`);
   revalidatePath("/admin/quotations");
+  revalidatePath("/portal");
+}
+
+/* ---------------------------- Payment milestones -------------------------- */
+
+async function milestonePosition(where: SQL | undefined) {
+  const [row] = await db
+    .select({ c: sql<number>`count(*)::int` })
+    .from(milestones)
+    .where(where);
+  return row?.c ?? 0;
+}
+
+export async function addQuotationMilestone(formData: FormData) {
+  await requireAdmin();
+  const quotationId = str(formData.get("quotationId"));
+  const label = str(formData.get("label"));
+  if (!quotationId || !label) return;
+  const [quote] = await db
+    .select()
+    .from(quotations)
+    .where(eq(quotations.id, quotationId))
+    .limit(1);
+  if (!quote) return;
+
+  await db.insert(milestones).values({
+    companyId: quote.companyId,
+    quotationId,
+    label,
+    amount: num(formData.get("amount")),
+    triggerStageIndex: intOrNull(formData.get("triggerStageIndex")),
+    position: await milestonePosition(eq(milestones.quotationId, quotationId)),
+  });
+  revalidatePath(`/admin/quotations/${quotationId}`);
+}
+
+export async function deleteMilestone(formData: FormData) {
+  await requireAdmin();
+  const id = str(formData.get("milestoneId"));
+  const back = str(formData.get("back"));
+  if (!id) return;
+  await db.delete(milestones).where(eq(milestones.id, id));
+  if (back) revalidatePath(back);
+}
+
+export async function addProjectMilestone(formData: FormData) {
+  await requireAdmin();
+  const projectId = str(formData.get("projectId"));
+  const label = str(formData.get("label"));
+  if (!projectId || !label) return;
+  const [project] = await db
+    .select()
+    .from(projects)
+    .where(eq(projects.id, projectId))
+    .limit(1);
+  if (!project) return;
+
+  await db.insert(milestones).values({
+    companyId: project.companyId,
+    projectId,
+    label,
+    amount: num(formData.get("amount")),
+    triggerStageIndex: intOrNull(formData.get("triggerStageIndex")),
+    position: await milestonePosition(eq(milestones.projectId, projectId)),
+  });
+  revalidatePath(`/admin/projects/${projectId}`);
+}
+
+export async function generateMilestoneInvoice(formData: FormData) {
+  await requireAdmin();
+  const id = str(formData.get("milestoneId"));
+  const projectId = str(formData.get("projectId"));
+  if (!id) return;
+  await invoiceMilestone(id);
+  revalidatePath(`/admin/projects/${projectId}`);
+  revalidatePath("/admin/invoices");
   revalidatePath("/portal");
 }
 
@@ -274,16 +350,14 @@ export async function addNote(formData: FormData) {
   const body = str(formData.get("body"));
   const companyId = str(formData.get("companyId"));
   if (!body || !companyId) return;
-  db.insert(notes)
-    .values({
-      body,
-      companyId,
-      projectId: str(formData.get("projectId")) || null,
-      authorId: admin.id,
-      authorName: admin.name ?? "Coreveb",
-      visibleToClient: str(formData.get("visibleToClient")) === "on",
-    })
-    .run();
+  await db.insert(notes).values({
+    body,
+    companyId,
+    projectId: str(formData.get("projectId")) || null,
+    authorId: admin.id,
+    authorName: admin.name ?? "Coreveb",
+    visibleToClient: str(formData.get("visibleToClient")) === "on",
+  });
   revalidatePath(`/admin/clients/${companyId}`);
   revalidatePath("/portal");
 }

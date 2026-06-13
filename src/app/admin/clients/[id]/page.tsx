@@ -31,13 +31,13 @@ export default async function AdminClientDetail({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const company = getCompany(id);
+  const company = await getCompany(id);
   if (!company) notFound();
 
-  const projects = getCompanyProjects(id);
-  const invoices = getCompanyInvoices(id);
-  const members = getCompanyUsers(id);
-  const notes = getCompanyNotes(id);
+  const projects = await getCompanyProjects(id);
+  const invoices = await getCompanyInvoices(id);
+  const members = await getCompanyUsers(id);
+  const notes = await getCompanyNotes(id);
 
   return (
     <div className="space-y-8">
@@ -64,7 +64,12 @@ export default async function AdminClientDetail({
               <div key={p.id} className="rounded-xl border border-border bg-bg/40 p-5">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium">{p.name}</span>
+                    <Link
+                      href={`/admin/projects/${p.id}`}
+                      className="font-medium hover:text-brand-soft"
+                    >
+                      {p.name}
+                    </Link>
                     <Badge tone={status.tone}>{status.label}</Badge>
                     <span className="text-xs text-muted">
                       {PROJECT_TYPE_LABEL[p.type as ProjectType]} · {currentStage}

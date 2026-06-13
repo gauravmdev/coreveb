@@ -60,14 +60,30 @@ and an **admin CRM**.
   Invoices. Moving a project's stage on `/admin/projects` (or a client page)
   updates what the client sees instantly.
 
+It also supports **quotations** with stage-based payment milestones: a quote can
+carry a payment schedule (e.g. "Start of work", "After UI/UX", "Before go-live"),
+and accepting it creates the project and auto-invoices each milestone as the
+project reaches its trigger stage.
+
 ### Stack
 
 - **Auth:** [Auth.js (NextAuth v5)](https://authjs.dev) — Google provider +
   a passwordless **dev login** for local use. JWT sessions.
-- **Database:** SQLite via **Drizzle ORM** + `better-sqlite3`. The DB file lives
-  at `./data/coreveb.db` (gitignored). Schema is in `src/db/schema.ts`; tables
-  are created automatically on first run from `drizzle/` migrations, and demo
-  data is seeded the first time the DB is empty (`src/db/seed.ts`).
+- **Database:** **PostgreSQL** via **Drizzle ORM** + `pg`. Schema is in
+  `src/db/schema.ts`; migrations live in `drizzle/`. Run `bun run db:migrate`
+  to apply migrations and seed demo data (idempotent — seeds only when empty).
+
+### Local development
+
+```bash
+bun install
+bun run db:up        # start a local Postgres (docker-compose, host port 55432)
+bun run db:migrate   # apply migrations + seed demo data
+bun dev
+```
+
+`.env.local` already points `DATABASE_URL` at the local Postgres. Stop it with
+`bun run db:down`.
 
 ### Signing in (local dev)
 
@@ -94,8 +110,33 @@ Any other email creates a new client account.
 
 ### Regenerating DB migrations
 
-After editing `src/db/schema.ts`, run `bunx drizzle-kit generate` to emit a new
-migration into `drizzle/`. It's applied automatically on the next server start.
+After editing `src/db/schema.ts`, run `bun run db:generate` to emit a new
+migration into `drizzle/`, then `bun run db:migrate` to apply it.
+
+## Deploying (Docker / Dokploy)
+
+The app ships a `Dockerfile` that builds with Bun and, on boot, **runs
+migrations + seed, then starts Next.js** (`bun run db:migrate && bun run start`).
+
+On your Hostinger VPS with Dokploy:
+
+1. **Create a Postgres service** in Dokploy (or reuse an existing one). Note its
+   internal connection string, e.g. `postgres://user:pass@coreveb-db:5432/coreveb`.
+2. **Create an Application** from this Git repo (Dockerfile build).
+3. Set environment variables on the app:
+   ```
+   DATABASE_URL=postgres://user:pass@<db-service>:5432/coreveb
+   AUTH_SECRET=<openssl rand -base64 32>
+   AUTH_TRUST_HOST=true
+   ADMIN_EMAIL=you@yourdomain.com
+   AUTH_DEV_LOGIN=false        # disable in production
+   AUTH_GOOGLE_ID=...          # once you've set up Google OAuth
+   AUTH_GOOGLE_SECRET=...
+   ```
+4. Point the domain at the app and deploy. Migrations run automatically on each
+   deploy; because Postgres is its own service, **data survives redeploys**.
+
+The image was verified to build and boot end-to-end (migrate → seed → serve).
 
 ## Notes
 

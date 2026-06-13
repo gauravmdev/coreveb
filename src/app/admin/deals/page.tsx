@@ -9,8 +9,8 @@ import {
 import { createDeal, setDealStage } from "@/app/admin/actions";
 
 export default async function AdminDeals() {
-  const rows = listDeals();
-  const companies = listCompanies();
+  const rows = await listDeals();
+  const companies = await listCompanies();
 
   const pipelineValue = rows
     .filter((r) => r.deal.stage !== "lost" && r.deal.stage !== "won")

@@ -1,10 +1,12 @@
 import {
-  sqliteTable,
+  pgTable,
   text,
   integer,
+  boolean,
+  doublePrecision,
+  timestamp,
   primaryKey,
-  real,
-} from "drizzle-orm/sqlite-core";
+} from "drizzle-orm/pg-core";
 
 const uuid = () =>
   text("id")
@@ -12,17 +14,17 @@ const uuid = () =>
     .$defaultFn(() => crypto.randomUUID());
 
 const createdAt = () =>
-  integer("created_at", { mode: "timestamp_ms" })
+  timestamp("created_at", { withTimezone: true })
     .notNull()
     .$defaultFn(() => new Date());
 
 /* ----------------------------- Auth.js tables ----------------------------- */
 
-export const users = sqliteTable("user", {
+export const users = pgTable("user", {
   id: uuid(),
   name: text("name"),
   email: text("email").unique(),
-  emailVerified: integer("email_verified", { mode: "timestamp_ms" }),
+  emailVerified: timestamp("email_verified", { withTimezone: true }),
   image: text("image"),
   // CRM extensions:
   role: text("role", { enum: ["client", "admin"] })
@@ -33,7 +35,7 @@ export const users = sqliteTable("user", {
   }),
 });
 
-export const accounts = sqliteTable(
+export const accounts = pgTable(
   "account",
   {
     userId: text("user_id")
@@ -55,27 +57,27 @@ export const accounts = sqliteTable(
   ],
 );
 
-export const sessions = sqliteTable("session", {
+export const sessions = pgTable("session", {
   sessionToken: text("session_token").primaryKey(),
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  expires: integer("expires", { mode: "timestamp_ms" }).notNull(),
+  expires: timestamp("expires", { withTimezone: true }).notNull(),
 });
 
-export const verificationTokens = sqliteTable(
+export const verificationTokens = pgTable(
   "verification_token",
   {
     identifier: text("identifier").notNull(),
     token: text("token").notNull(),
-    expires: integer("expires", { mode: "timestamp_ms" }).notNull(),
+    expires: timestamp("expires", { withTimezone: true }).notNull(),
   },
   (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })],
 );
 
 /* -------------------------------- CRM tables ------------------------------ */
 
-export const companies = sqliteTable("company", {
+export const companies = pgTable("company", {
   id: uuid(),
   name: text("name").notNull(),
   website: text("website"),
@@ -85,7 +87,7 @@ export const companies = sqliteTable("company", {
   createdAt: createdAt(),
 });
 
-export const projects = sqliteTable("project", {
+export const projects = pgTable("project", {
   id: uuid(),
   companyId: text("company_id")
     .notNull()
@@ -101,12 +103,12 @@ export const projects = sqliteTable("project", {
   })
     .notNull()
     .default("active"),
-  startedAt: integer("started_at", { mode: "timestamp_ms" }),
-  targetDate: integer("target_date", { mode: "timestamp_ms" }),
+  startedAt: timestamp("started_at", { withTimezone: true }),
+  targetDate: timestamp("target_date", { withTimezone: true }),
   createdAt: createdAt(),
 });
 
-export const deals = sqliteTable("deal", {
+export const deals = pgTable("deal", {
   id: uuid(),
   companyId: text("company_id").references(() => companies.id, {
     onDelete: "set null",
@@ -114,7 +116,7 @@ export const deals = sqliteTable("deal", {
   title: text("title").notNull(),
   contactName: text("contact_name"),
   contactEmail: text("contact_email"),
-  value: real("value").notNull().default(0),
+  value: doublePrecision("value").notNull().default(0),
   stage: text("stage", {
     enum: ["lead", "qualified", "proposal", "won", "lost"],
   })
@@ -123,7 +125,7 @@ export const deals = sqliteTable("deal", {
   createdAt: createdAt(),
 });
 
-export const invoices = sqliteTable("invoice", {
+export const invoices = pgTable("invoice", {
   id: uuid(),
   companyId: text("company_id")
     .notNull()
@@ -132,18 +134,18 @@ export const invoices = sqliteTable("invoice", {
     onDelete: "set null",
   }),
   number: text("number").notNull(),
-  amount: real("amount").notNull().default(0),
+  amount: doublePrecision("amount").notNull().default(0),
   status: text("status", {
     enum: ["draft", "sent", "paid", "overdue"],
   })
     .notNull()
     .default("draft"),
-  issuedAt: integer("issued_at", { mode: "timestamp_ms" }),
-  dueAt: integer("due_at", { mode: "timestamp_ms" }),
+  issuedAt: timestamp("issued_at", { withTimezone: true }),
+  dueAt: timestamp("due_at", { withTimezone: true }),
   createdAt: createdAt(),
 });
 
-export const notes = sqliteTable("note", {
+export const notes = pgTable("note", {
   id: uuid(),
   body: text("body").notNull(),
   authorId: text("author_id").references(() => users.id, {
@@ -157,13 +159,11 @@ export const notes = sqliteTable("note", {
     onDelete: "cascade",
   }),
   dealId: text("deal_id").references(() => deals.id, { onDelete: "cascade" }),
-  visibleToClient: integer("visible_to_client", { mode: "boolean" })
-    .notNull()
-    .default(false),
+  visibleToClient: boolean("visible_to_client").notNull().default(false),
   createdAt: createdAt(),
 });
 
-export const quotations = sqliteTable("quotation", {
+export const quotations = pgTable("quotation", {
   id: uuid(),
   companyId: text("company_id")
     .notNull()
@@ -176,30 +176,53 @@ export const quotations = sqliteTable("quotation", {
   })
     .notNull()
     .default("draft"),
-  // Project type to spin up when the quote is accepted.
   projectType: text("project_type", {
     enum: ["software", "web", "mobile", "marketing"],
   })
     .notNull()
     .default("web"),
-  taxRate: real("tax_rate").notNull().default(0),
+  taxRate: doublePrecision("tax_rate").notNull().default(0),
   terms: text("terms"),
-  validUntil: integer("valid_until", { mode: "timestamp_ms" }),
+  validUntil: timestamp("valid_until", { withTimezone: true }),
   createdProjectId: text("created_project_id").references(() => projects.id, {
     onDelete: "set null",
   }),
   createdAt: createdAt(),
 });
 
-export const quotationItems = sqliteTable("quotation_item", {
+export const quotationItems = pgTable("quotation_item", {
   id: uuid(),
   quotationId: text("quotation_id")
     .notNull()
     .references(() => quotations.id, { onDelete: "cascade" }),
   description: text("description").notNull(),
-  quantity: real("quantity").notNull().default(1),
-  unitPrice: real("unit_price").notNull().default(0),
+  quantity: doublePrecision("quantity").notNull().default(1),
+  unitPrice: doublePrecision("unit_price").notNull().default(0),
   position: integer("position").notNull().default(0),
+});
+
+export const milestones = pgTable("milestone", {
+  id: uuid(),
+  companyId: text("company_id")
+    .notNull()
+    .references(() => companies.id, { onDelete: "cascade" }),
+  quotationId: text("quotation_id").references(() => quotations.id, {
+    onDelete: "set null",
+  }),
+  projectId: text("project_id").references(() => projects.id, {
+    onDelete: "cascade",
+  }),
+  label: text("label").notNull(),
+  amount: doublePrecision("amount").notNull().default(0),
+  triggerStageIndex: integer("trigger_stage_index"),
+  position: integer("position").notNull().default(0),
+  status: text("status", { enum: ["pending", "invoiced", "paid"] })
+    .notNull()
+    .default("pending"),
+  invoiceId: text("invoice_id").references(() => invoices.id, {
+    onDelete: "set null",
+  }),
+  createdAt: createdAt(),
 });
 
 export type User = typeof users.$inferSelect;
@@ -210,3 +233,4 @@ export type Invoice = typeof invoices.$inferSelect;
 export type Note = typeof notes.$inferSelect;
 export type Quotation = typeof quotations.$inferSelect;
 export type QuotationItem = typeof quotationItems.$inferSelect;
+export type Milestone = typeof milestones.$inferSelect;

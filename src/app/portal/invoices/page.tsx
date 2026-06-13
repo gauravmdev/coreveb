@@ -5,7 +5,7 @@ import { INVOICE_STATUS, formatCurrency, formatDate } from "@/lib/crm";
 
 export default async function PortalInvoices() {
   const user = await requireUser();
-  const invoices = user.companyId ? getCompanyInvoices(user.companyId) : [];
+  const invoices = user.companyId ? await getCompanyInvoices(user.companyId) : [];
 
   const paid = invoices.filter((i) => i.status === "paid").reduce((s, i) => s + i.amount, 0);
   const due = invoices

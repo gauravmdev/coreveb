@@ -29,20 +29,23 @@ if (process.env.AUTH_DEV_LOGIN === "true") {
           .toLowerCase();
         if (!email || !email.includes("@")) return null;
 
-        let user = db.select().from(users).where(eq(users.email, email)).get();
+        let [user] = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, email))
+          .limit(1);
         if (!user) {
           const adminEmail = (
             process.env.ADMIN_EMAIL ?? "admin@coreveb.com"
           ).toLowerCase();
-          user = db
+          [user] = await db
             .insert(users)
             .values({
               email,
               name: email.split("@")[0],
               role: email === adminEmail ? "admin" : "client",
             })
-            .returning()
-            .get();
+            .returning();
         }
         return {
           id: user.id,

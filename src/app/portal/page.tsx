@@ -24,10 +24,10 @@ export default async function PortalHome() {
     return <EmptyState name={user.name ?? user.email ?? "there"} />;
   }
 
-  const company = getCompany(user.companyId);
-  const projects = getCompanyProjects(user.companyId);
-  const invoices = getCompanyInvoices(user.companyId);
-  const updates = getClientNotes(user.companyId);
+  const company = await getCompany(user.companyId);
+  const projects = await getCompanyProjects(user.companyId);
+  const invoices = await getCompanyInvoices(user.companyId);
+  const updates = await getClientNotes(user.companyId);
 
   const outstanding = invoices
     .filter((i) => i.status === "sent" || i.status === "overdue")

@@ -14,9 +14,9 @@ import {
 import { createInvoice, setInvoiceStatus } from "@/app/admin/actions";
 
 export default async function AdminInvoices() {
-  const rows = listInvoicesWithRefs();
-  const companies = listCompanies();
-  const projects = listProjectsWithCompany();
+  const rows = await listInvoicesWithRefs();
+  const companies = await listCompanies();
+  const projects = await listProjectsWithCompany();
 
   const outstanding = rows
     .filter((r) => r.invoice.status === "sent" || r.invoice.status === "overdue")

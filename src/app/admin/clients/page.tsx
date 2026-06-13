@@ -5,7 +5,7 @@ import { Field, Panel, Submit, inputCls } from "@/components/app/form";
 import { createCompany } from "@/app/admin/actions";
 
 export default async function AdminClients() {
-  const companies = listCompanies();
+  const companies = await listCompanies();
 
   return (
     <div className="space-y-8">

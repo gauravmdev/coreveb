@@ -8,9 +8,12 @@ import { users, type User } from "@/db/schema";
 export async function currentUser(): Promise<User | null> {
   const session = await auth();
   if (!session?.user?.id) return null;
-  return (
-    db.select().from(users).where(eq(users.id, session.user.id)).get() ?? null
-  );
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, session.user.id))
+    .limit(1);
+  return user ?? null;
 }
 
 export async function requireUser(): Promise<User> {

@@ -3,8 +3,8 @@ import { getAdminOverview, listRecentNotes } from "@/lib/queries";
 import { formatCurrency, formatDate } from "@/lib/crm";
 
 export default async function AdminOverview() {
-  const o = getAdminOverview();
-  const recent = listRecentNotes(8);
+  const o = await getAdminOverview();
+  const recent = await listRecentNotes(8);
 
   const stats = [
     { label: "Clients", value: String(o.companies), href: "/admin/clients" },

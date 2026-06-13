@@ -92,6 +92,15 @@ export const QUOTE_STATUS: Record<
   expired: { label: "Expired", tone: "amber" },
 };
 
+export const MILESTONE_STATUS: Record<
+  "pending" | "invoiced" | "paid",
+  { label: string; tone: Tone }
+> = {
+  pending: { label: "Scheduled", tone: "muted" },
+  invoiced: { label: "Invoiced", tone: "brand" },
+  paid: { label: "Paid", tone: "green" },
+};
+
 export function quoteTotals(
   items: { quantity: number; unitPrice: number }[],
   taxRate = 0,

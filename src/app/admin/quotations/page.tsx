@@ -11,10 +11,10 @@ import { QUOTE_STATUS, formatCurrency } from "@/lib/crm";
 import { createQuotation } from "@/app/admin/actions";
 
 export default async function AdminQuotations() {
-  const rows = listQuotations();
-  const companies = listCompanies();
-  const deals = listDeals();
-  const totals = quotationTotals();
+  const rows = await listQuotations();
+  const companies = await listCompanies();
+  const deals = await listDeals();
+  const totals = await quotationTotals();
 
   return (
     <div className="space-y-8">

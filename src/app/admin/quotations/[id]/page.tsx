@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCompany, getQuotation, getQuotationItems } from "@/lib/queries";
+import {
+  getCompany,
+  getQuotation,
+  getQuotationItems,
+  getQuotationMilestones,
+} from "@/lib/queries";
 import { Badge } from "@/components/app/badge";
 import { Field, Panel, Submit, inputCls } from "@/components/app/form";
 import {
@@ -9,10 +14,13 @@ import {
   formatCurrency,
   formatDate,
   quoteTotals,
+  stagesFor,
   type ProjectType,
 } from "@/lib/crm";
 import {
   addQuotationItem,
+  addQuotationMilestone,
+  deleteMilestone,
   deleteQuotationItem,
   setQuotationStatus,
 } from "@/app/admin/actions";
@@ -23,13 +31,17 @@ export default async function AdminQuotationDetail({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const quote = getQuotation(id);
+  const quote = await getQuotation(id);
   if (!quote) notFound();
 
-  const company = getCompany(quote.companyId);
-  const items = getQuotationItems(id);
+  const company = await getCompany(quote.companyId);
+  const items = await getQuotationItems(id);
   const { subtotal, tax, total } = quoteTotals(items, quote.taxRate);
   const editable = quote.status === "draft" || quote.status === "sent";
+
+  const schedule = await getQuotationMilestones(id);
+  const stages = stagesFor(quote.projectType as ProjectType);
+  const scheduled = schedule.reduce((s, m) => s + m.amount, 0);
 
   return (
     <div className="space-y-8">
@@ -162,6 +174,83 @@ export default async function AdminQuotationDetail({
             </Field>
             <Field label="Unit price">
               <input name="unitPrice" type="number" min="0" className={inputCls} placeholder="0" />
+            </Field>
+            <Submit>Add</Submit>
+          </form>
+        )}
+      </Panel>
+
+      <Panel title="Payment schedule">
+        <p className="mb-4 text-sm text-muted">
+          Define stage-based payments. On acceptance a project is created and
+          each payment is invoiced automatically when the project reaches its
+          trigger stage. Use <span className="text-fg">Manual</span> for
+          scope-change or ad-hoc amounts you&apos;ll invoice yourself.
+        </p>
+
+        <div className="space-y-2">
+          {schedule.map((m) => (
+            <div
+              key={m.id}
+              className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border bg-bg/40 px-4 py-3 text-sm"
+            >
+              <span className="font-medium">{m.label}</span>
+              <span className="text-muted">
+                {m.triggerStageIndex === null
+                  ? "Manual"
+                  : `When reaching: ${stages[m.triggerStageIndex] ?? "—"}`}
+              </span>
+              <span className="flex items-center gap-3">
+                <span className="font-medium">{formatCurrency(m.amount)}</span>
+                {editable && (
+                  <form action={deleteMilestone} className="inline">
+                    <input type="hidden" name="milestoneId" value={m.id} />
+                    <input type="hidden" name="back" value={`/admin/quotations/${quote.id}`} />
+                    <button type="submit" className="text-muted hover:text-red-300" aria-label="Remove">
+                      ✕
+                    </button>
+                  </form>
+                )}
+              </span>
+            </div>
+          ))}
+          {schedule.length === 0 && (
+            <p className="text-sm text-muted">No payments scheduled yet.</p>
+          )}
+        </div>
+
+        <p className="mt-3 text-sm text-muted">
+          Scheduled <span className="text-fg">{formatCurrency(scheduled)}</span>{" "}
+          of {formatCurrency(total)} quote total
+          {Math.abs(scheduled - total) > 0.5 && (
+            <span className="text-amber-300">
+              {" "}· {formatCurrency(Math.abs(total - scheduled))}{" "}
+              {scheduled > total ? "over" : "unallocated"}
+            </span>
+          )}
+        </p>
+
+        {editable && (
+          <form
+            action={addQuotationMilestone}
+            className="mt-5 grid items-end gap-3 border-t border-border pt-5 sm:grid-cols-[1fr_120px_1fr_auto]"
+          >
+            <input type="hidden" name="quotationId" value={quote.id} />
+            <Field label="Payment for">
+              <input name="label" required className={inputCls} placeholder="Start of work" />
+            </Field>
+            <Field label="Amount">
+              <input name="amount" type="number" min="0" className={inputCls} placeholder="0" />
+            </Field>
+            <Field label="Trigger">
+              <select name="triggerStageIndex" className={inputCls} defaultValue="">
+                <option value="">Manual (invoice yourself)</option>
+                {stages.map((s, i) => (
+                  <option key={s} value={i}>
+                    When reaching: {s}
+                  </option>
+                ))}
+              </select>
             </Field>
             <Submit>Add</Submit>
           </form>

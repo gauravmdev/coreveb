@@ -1,13 +1,20 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/session";
-import { getProject, getProjectNotes } from "@/lib/queries";
+import {
+  getProject,
+  getProjectMilestones,
+  getProjectNotes,
+} from "@/lib/queries";
 import { Badge } from "@/components/app/badge";
 import { StageTimeline } from "@/components/app/stage-timeline";
 import {
+  MILESTONE_STATUS,
   PROJECT_STATUS,
   PROJECT_TYPE_LABEL,
+  formatCurrency,
   formatDate,
+  stagesFor,
   type ProjectType,
 } from "@/lib/crm";
 
@@ -18,13 +25,15 @@ export default async function ProjectDetail({
 }) {
   const user = await requireUser();
   const { id } = await params;
-  const project = getProject(id);
+  const project = await getProject(id);
 
   // Authorization: clients can only view their own company's projects.
   if (!project || project.companyId !== user.companyId) notFound();
 
   const status = PROJECT_STATUS[project.status];
-  const updates = getProjectNotes(project.id, true);
+  const updates = await getProjectNotes(project.id, true);
+  const milestones = await getProjectMilestones(project.id);
+  const stages = stagesFor(project.type as ProjectType);
 
   return (
     <div className="space-y-8">
@@ -54,6 +63,34 @@ export default async function ProjectDetail({
         <h2 className="mb-6 text-lg font-semibold">Progress</h2>
         <StageTimeline project={project} />
       </section>
+
+      {milestones.length > 0 && (
+        <section className="rounded-2xl border border-border bg-surface/40 p-7">
+          <h2 className="mb-5 text-lg font-semibold">Payment schedule</h2>
+          <div className="space-y-2">
+            {milestones.map((m) => {
+              const ms = MILESTONE_STATUS[m.status];
+              return (
+                <div
+                  key={m.id}
+                  className="flex flex-wrap items-center justify-between gap-3 border-b border-border/50 py-2.5 text-sm last:border-0"
+                >
+                  <span className="flex items-center gap-2">
+                    <Badge tone={ms.tone}>{ms.label}</Badge>
+                    {m.label}
+                  </span>
+                  <span className="text-muted">
+                    {m.triggerStageIndex === null
+                      ? "On request"
+                      : `at ${stages[m.triggerStageIndex] ?? "—"}`}
+                  </span>
+                  <span className="font-medium">{formatCurrency(m.amount)}</span>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <section>
         <h2 className="mb-4 text-lg font-semibold">Updates</h2>

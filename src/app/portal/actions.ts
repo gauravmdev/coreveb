@@ -7,8 +7,12 @@ import { quotations } from "@/db/schema";
 import { requireUser } from "@/lib/session";
 import { applyAcceptance } from "@/lib/quotations";
 
-function loadOwnedSentQuote(id: string, companyId: string | null) {
-  const quote = db.select().from(quotations).where(eq(quotations.id, id)).get();
+async function loadOwnedSentQuote(id: string, companyId: string | null) {
+  const [quote] = await db
+    .select()
+    .from(quotations)
+    .where(eq(quotations.id, id))
+    .limit(1);
   if (!quote || quote.companyId !== companyId || quote.status !== "sent") {
     return null;
   }
@@ -18,10 +22,10 @@ function loadOwnedSentQuote(id: string, companyId: string | null) {
 export async function acceptQuotation(formData: FormData) {
   const user = await requireUser();
   const id = String(formData.get("quotationId") ?? "");
-  const quote = loadOwnedSentQuote(id, user.companyId);
+  const quote = await loadOwnedSentQuote(id, user.companyId);
   if (!quote) return;
 
-  applyAcceptance(id, user.name ?? "Client");
+  await applyAcceptance(id, user.name ?? "Client");
   revalidatePath("/portal/quotations");
   revalidatePath("/portal");
 }
@@ -29,12 +33,9 @@ export async function acceptQuotation(formData: FormData) {
 export async function declineQuotation(formData: FormData) {
   const user = await requireUser();
   const id = String(formData.get("quotationId") ?? "");
-  const quote = loadOwnedSentQuote(id, user.companyId);
+  const quote = await loadOwnedSentQuote(id, user.companyId);
   if (!quote) return;
 
-  db.update(quotations)
-    .set({ status: "declined" })
-    .where(eq(quotations.id, id))
-    .run();
+  await db.update(quotations).set({ status: "declined" }).where(eq(quotations.id, id));
   revalidatePath("/portal/quotations");
 }

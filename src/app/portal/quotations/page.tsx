@@ -15,7 +15,15 @@ import { acceptQuotation, declineQuotation } from "@/app/portal/actions";
 
 export default async function PortalQuotations() {
   const user = await requireUser();
-  const quotes = user.companyId ? getCompanyQuotations(user.companyId) : [];
+  const quoteRows = user.companyId
+    ? await getCompanyQuotations(user.companyId)
+    : [];
+  const quotes = await Promise.all(
+    quoteRows.map(async (quote) => ({
+      quote,
+      items: await getQuotationItems(quote.id),
+    })),
+  );
 
   return (
     <div className="space-y-8">
@@ -27,8 +35,7 @@ export default async function PortalQuotations() {
       </header>
 
       <div className="space-y-4">
-        {quotes.map((quote) => {
-          const items = getQuotationItems(quote.id);
+        {quotes.map(({ quote, items }) => {
           const { tax, total } = quoteTotals(items, quote.taxRate);
           const pending = quote.status === "sent";
 
