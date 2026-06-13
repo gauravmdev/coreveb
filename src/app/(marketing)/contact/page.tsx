@@ -33,8 +33,17 @@ export default function ContactPage() {
               </dd>
             </div>
             <div className="flex gap-3">
-              <dt className="w-20 text-muted">Phone</dt>
-              <dd>{site.phone}</dd>
+              <dt className="w-20 text-muted">WhatsApp</dt>
+              <dd>
+                <a
+                  href={`https://wa.me/${site.whatsapp}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-brand-soft"
+                >
+                  {site.phone}
+                </a>
+              </dd>
             </div>
             <div className="flex gap-3">
               <dt className="w-20 text-muted">Social</dt>

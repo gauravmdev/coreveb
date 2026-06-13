@@ -4,7 +4,8 @@ export const site = {
   description:
     "Coreveb is an AI-native product studio. We design, build, and grow digital products — pairing custom software, mobile apps, and intelligent automation with the marketing that gets them seen.",
   email: "hello@coreveb.com",
-  phone: "+1 (555) 000-1234",
+  phone: "+91 79057 84798",
+  whatsapp: "917905784798",
   url: "https://coreveb.com",
   socials: [
     { label: "X", href: "https://x.com" },
