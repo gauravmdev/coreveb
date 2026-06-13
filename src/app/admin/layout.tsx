@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { requireAdmin } from "@/lib/session";
 import { countNewLeads, getUnreadTotal } from "@/lib/queries";
 import { AppShell, type NavItem } from "@/components/app/app-shell";
+import { WhatsAppButton } from "@/components/whatsapp-button";
 
 export const dynamic = "force-dynamic";
 
@@ -28,8 +29,11 @@ export default async function AdminLayout({
   ];
 
   return (
-    <AppShell user={user} nav={nav} area="Admin" theme={theme}>
-      {children}
-    </AppShell>
+    <>
+      <AppShell user={user} nav={nav} area="Admin" theme={theme}>
+        {children}
+      </AppShell>
+      <WhatsAppButton />
+    </>
   );
 }

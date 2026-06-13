@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/session";
 import { getUnreadTotal } from "@/lib/queries";
 import { AppShell, type NavItem } from "@/components/app/app-shell";
+import { WhatsAppButton } from "@/components/whatsapp-button";
 
 export const dynamic = "force-dynamic";
 
@@ -25,8 +26,11 @@ export default async function PortalLayout({
   ];
 
   return (
-    <AppShell user={user} nav={nav} area="Client portal" theme={theme}>
-      {children}
-    </AppShell>
+    <>
+      <AppShell user={user} nav={nav} area="Client portal" theme={theme}>
+        {children}
+      </AppShell>
+      <WhatsAppButton />
+    </>
   );
 }
