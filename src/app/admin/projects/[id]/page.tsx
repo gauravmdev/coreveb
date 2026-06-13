@@ -3,11 +3,13 @@ import { notFound } from "next/navigation";
 import {
   getCompany,
   getProject,
+  getProjectMessages,
   getProjectMilestones,
 } from "@/lib/queries";
 import { Badge } from "@/components/app/badge";
 import { Field, Panel, Submit, inputCls } from "@/components/app/form";
 import { StageTimeline } from "@/components/app/stage-timeline";
+import { MessageThread } from "@/components/app/message-thread";
 import {
   MILESTONE_STATUS,
   PROJECT_STATUS,
@@ -35,6 +37,7 @@ export default async function AdminProjectDetail({
 
   const company = await getCompany(project.companyId);
   const milestones = await getProjectMilestones(id);
+  const thread = await getProjectMessages(id);
   const stages = stagesFor(project.type as ProjectType);
   const { stages: pStages } = projectProgress(project);
   const status = PROJECT_STATUS[project.status];
@@ -179,6 +182,8 @@ export default async function AdminProjectDetail({
           <Submit>Add</Submit>
         </form>
       </Panel>
+
+      <MessageThread projectId={project.id} messages={thread} meRole="admin" />
     </div>
   );
 }

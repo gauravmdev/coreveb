@@ -225,6 +225,24 @@ export const milestones = pgTable("milestone", {
   createdAt: createdAt(),
 });
 
+/** Two-way project message thread between client and admin. */
+export const messages = pgTable("message", {
+  id: uuid(),
+  projectId: text("project_id")
+    .notNull()
+    .references(() => projects.id, { onDelete: "cascade" }),
+  companyId: text("company_id")
+    .notNull()
+    .references(() => companies.id, { onDelete: "cascade" }),
+  authorId: text("author_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  authorName: text("author_name").notNull(),
+  authorRole: text("author_role", { enum: ["client", "admin"] }).notNull(),
+  body: text("body").notNull(),
+  createdAt: createdAt(),
+});
+
 export type User = typeof users.$inferSelect;
 export type Company = typeof companies.$inferSelect;
 export type Project = typeof projects.$inferSelect;
@@ -234,3 +252,4 @@ export type Note = typeof notes.$inferSelect;
 export type Quotation = typeof quotations.$inferSelect;
 export type QuotationItem = typeof quotationItems.$inferSelect;
 export type Milestone = typeof milestones.$inferSelect;
+export type Message = typeof messages.$inferSelect;

@@ -6,6 +6,7 @@ import {
   companies,
   deals,
   invoices,
+  messages,
   milestones,
   notes,
   projects,
@@ -71,6 +72,16 @@ export function getCompanyNotes(companyId: string) {
     .from(notes)
     .where(eq(notes.companyId, companyId))
     .orderBy(desc(notes.createdAt));
+}
+
+/* -------------------------------- Messages -------------------------------- */
+
+export function getProjectMessages(projectId: string) {
+  return db
+    .select()
+    .from(messages)
+    .where(eq(messages.projectId, projectId))
+    .orderBy(messages.createdAt);
 }
 
 /* ------------------------------- Milestones ------------------------------- */
