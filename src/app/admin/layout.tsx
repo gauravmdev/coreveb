@@ -22,6 +22,7 @@ export default async function AdminLayout({
     { label: "Deals", href: "/admin/deals", icon: "target" },
     { label: "Quotations", href: "/admin/quotations", icon: "doc" },
     { label: "Invoices", href: "/admin/invoices", icon: "receipt" },
+    { label: "AI Help", href: "/admin/assistant", icon: "spark" },
   ];
 
   return (

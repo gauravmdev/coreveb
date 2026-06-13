@@ -1,0 +1,363 @@
+// Built-in knowledge base for the in-app AI assistant.
+// No external LLM — answers are matched from curated entries below, scoped by
+// audience (client portal vs admin). Structured so a real model can be dropped
+// in later (feed these entries as grounding context).
+
+export type Audience = "client" | "admin";
+
+export type KbEntry = {
+  id: string;
+  /** Who should see this entry. "all" shows in both portal and admin. */
+  audience: Audience | "all";
+  category: string;
+  question: string;
+  /** Extra terms that should match this entry beyond the question text. */
+  keywords: string[];
+  /** Answer body. Blank lines separate paragraphs; "- " lines render as bullets. */
+  answer: string;
+  /** ids of related entries surfaced as follow-up chips. */
+  related?: string[];
+};
+
+export const KB: KbEntry[] = [
+  // ---- Shared: what the app is -------------------------------------------
+  {
+    id: "what-is-coreveb",
+    audience: "all",
+    category: "Getting started",
+    question: "What is Coreveb and what does this app do?",
+    keywords: ["coreveb", "what is", "about", "platform", "overview", "purpose", "do"],
+    answer:
+      "Coreveb builds software, mobile apps, and runs digital marketing. This app is the workspace that connects you with us end to end.\n\nIn one place you can:\n- Track each project through clear stages\n- Review and accept quotations\n- Pay invoices tied to project milestones\n- Message us with quotes, invoices, and approvals built right into the conversation\n\nClients see their own projects and billing; our team uses the admin side to run the whole pipeline.",
+    related: ["project-stages", "messaging-overview", "quote-to-project"],
+  },
+
+  // ---- Projects & stages -------------------------------------------------
+  {
+    id: "project-stages",
+    audience: "all",
+    category: "Projects",
+    question: "How do project stages and progress work?",
+    keywords: ["stage", "stages", "progress", "timeline", "status", "phase", "step", "milestone progress", "track"],
+    answer:
+      "Every project moves through an ordered set of stages, shown as a timeline. The highlighted stage is where the work is right now, and everything before it is complete.\n\nTypical flow: Discovery → Design → Build → Review → Launch (the exact stages depend on whether it's a software, web, mobile, or marketing project).\n\nWhen a stage needs your input, the project is marked \"awaiting approval\" and you'll be asked to sign off before it advances.",
+    related: ["awaiting-approval", "project-types", "stage-billing"],
+  },
+  {
+    id: "project-types",
+    audience: "all",
+    category: "Projects",
+    question: "What types of projects are there?",
+    keywords: ["type", "types", "software", "web", "mobile", "marketing", "category", "kind"],
+    answer:
+      "There are four project types, each with its own stage flow:\n- Software — custom platforms and internal tools\n- Web App — websites and web applications\n- Mobile App — iOS and Android apps\n- Marketing — campaigns, SEO, and growth work\n\nThe type is set when a quotation is accepted and the project is created.",
+    related: ["project-stages", "quote-to-project"],
+  },
+  {
+    id: "awaiting-approval",
+    audience: "client",
+    category: "Projects",
+    question: "What does \"awaiting approval\" mean and how do I sign off a stage?",
+    keywords: ["approval", "approve", "sign off", "signoff", "awaiting", "review", "accept stage", "confirm"],
+    answer:
+      "\"Awaiting approval\" means a stage is finished and we need your go-ahead before starting the next one.\n\nYou'll see an approval card in your Messages thread (and the project shows the awaiting state). Open it and click Approve to advance the project, or reply in the thread if you want changes first.",
+    related: ["project-stages", "messaging-actionable"],
+  },
+  {
+    id: "advance-stage-admin",
+    audience: "admin",
+    category: "Projects",
+    question: "How do I move a project to the next stage or request a client sign-off?",
+    keywords: ["advance", "next stage", "move stage", "sign off", "approval", "progress", "request approval"],
+    answer:
+      "Open the project from Projects. You can advance the stage directly, or send a sign-off request to the client.\n\nSending a sign-off marks the project \"awaiting approval\" and drops an approval card into the client's Messages thread. When they approve, the project advances automatically and (if a milestone is tied to that stage) the matching invoice is raised.",
+    related: ["stage-billing", "messaging-actionable", "project-stages"],
+  },
+
+  // ---- Quotations --------------------------------------------------------
+  {
+    id: "what-is-quotation",
+    audience: "all",
+    category: "Quotations",
+    question: "What is a quotation?",
+    keywords: ["quotation", "quote", "estimate", "proposal", "pricing", "scope", "line items"],
+    answer:
+      "A quotation is the priced scope for a piece of work — a list of line items, a tax line (GST), and a total in INR. It's what you review before work starts.\n\nQuotes have a status: Draft, Sent, Accepted, or Declined. Once accepted, it locks in the scope and kicks off a project.",
+    related: ["accept-quote", "quote-to-project", "what-is-proposal"],
+  },
+  {
+    id: "accept-quote",
+    audience: "client",
+    category: "Quotations",
+    question: "How do I accept or decline a quotation?",
+    keywords: ["accept", "approve quote", "decline", "reject", "sign", "agree"],
+    answer:
+      "Open Quotations (or the quote card in your Messages) to review the line items and total. Click Accept to approve it or Decline if it needs rework.\n\nAccepting does two things automatically: it creates your project so you can track progress, and it sets up the payment schedule. You can always message us first if something needs adjusting.",
+    related: ["quote-to-project", "stage-billing", "messaging-actionable"],
+  },
+  {
+    id: "quote-to-project",
+    audience: "all",
+    category: "Quotations",
+    question: "What happens when a quotation is accepted?",
+    keywords: ["accepted", "convert", "auto create", "project created", "after accept", "what happens"],
+    answer:
+      "Accepting a quotation automatically:\n- Creates a project of the quoted type, starting at the first stage\n- Sets up milestone (stage-based) billing if milestones were defined on the quote\n- Notifies our team to begin work\n\nNo invoice is raised for the full amount up front — billing follows the milestone schedule.",
+    related: ["stage-billing", "project-stages", "accept-quote"],
+  },
+  {
+    id: "create-quote-admin",
+    audience: "admin",
+    category: "Quotations",
+    question: "How do I create and send a quotation?",
+    keywords: ["create quote", "new quotation", "make quote", "send quote", "add items", "draft"],
+    answer:
+      "Go to Quotations and click \"New quotation\" — a slide-over opens. Pick the client, give it a title, choose the project type that will be created on accept, set the tax %, and (optionally) link a deal.\n\nAfter creating it you'll land on the quote detail page to add line items and milestones, then mark it Sent. The client can review and accept it from their portal.",
+    related: ["stage-billing", "quote-to-project", "what-is-proposal"],
+  },
+  {
+    id: "what-is-proposal",
+    audience: "admin",
+    category: "Quotations",
+    question: "How do I generate a polished PDF proposal?",
+    keywords: ["proposal", "pdf", "print", "document", "export", "polished", "presentation"],
+    answer:
+      "Each quotation has a shareable proposal view (the /proposals page) formatted like a professional document — cover, scope sections, pricing in INR with GST, and terms.\n\nOpen it and use your browser's Print → Save as PDF. The print styles are tuned so it exports cleanly without any headless-browser setup.",
+    related: ["create-quote-admin", "what-is-quotation"],
+  },
+
+  // ---- Billing & invoices ------------------------------------------------
+  {
+    id: "stage-billing",
+    audience: "all",
+    category: "Billing",
+    question: "How does stage-based (milestone) billing work?",
+    keywords: ["milestone", "stage billing", "stage based", "payment schedule", "installment", "partial", "split payment"],
+    answer:
+      "Instead of one large bill, payment is split into milestones tied to project stages. Each milestone has an amount and the stage that triggers it.\n\nWhen the project reaches that stage (usually after you approve the previous one), the milestone's invoice is raised automatically. So you pay in step with progress rather than all up front.",
+    related: ["what-is-invoice", "project-stages", "quote-to-project"],
+  },
+  {
+    id: "what-is-invoice",
+    audience: "all",
+    category: "Billing",
+    question: "How do invoices and payment statuses work?",
+    keywords: ["invoice", "bill", "payment", "due", "paid", "outstanding", "overdue", "amount", "pay"],
+    answer:
+      "An invoice is a bill for a milestone (or a one-off charge), shown in INR with a due date.\n\nStatuses:\n- Draft — not sent yet\n- Sent — awaiting payment\n- Paid — settled\n- Overdue — past its due date\n\nClients see their invoices under Invoices; \"outstanding\" totals everything sent but not yet paid.",
+    related: ["stage-billing", "pay-invoice", "currency"],
+  },
+  {
+    id: "pay-invoice",
+    audience: "client",
+    category: "Billing",
+    question: "How do I pay an invoice?",
+    keywords: ["pay", "payment", "how to pay", "settle", "checkout"],
+    answer:
+      "Open Invoices to see each bill, its amount, and due date. Payment is arranged with our team — message us on the invoice and we'll confirm the method and mark it Paid once settled.\n\nYou'll always see the current status, so there's no guessing what's outstanding.",
+    related: ["what-is-invoice", "messaging-overview"],
+  },
+  {
+    id: "raise-invoice-admin",
+    audience: "admin",
+    category: "Billing",
+    question: "How do I raise an invoice or mark one paid?",
+    keywords: ["create invoice", "new invoice", "raise invoice", "mark paid", "set status", "bill client"],
+    answer:
+      "Go to Invoices → \"New invoice\". Pick the client, optionally link a project, set the number, amount (₹), due date, and status.\n\nMilestone invoices are raised automatically when a project hits the triggering stage, so you mostly only create one-offs here. To update one, use the status dropdown in the row and click Set — e.g. mark it Paid once payment clears.",
+    related: ["stage-billing", "what-is-invoice"],
+  },
+  {
+    id: "currency",
+    audience: "all",
+    category: "Billing",
+    question: "What currency and tax does the app use?",
+    keywords: ["currency", "inr", "rupee", "tax", "gst", "vat", "₹"],
+    answer:
+      "Everything is in Indian Rupees (INR, ₹) and tax is shown as GST. Amounts are formatted in the Indian numbering style. Tax rates are set per quotation.",
+    related: ["what-is-invoice", "what-is-quotation"],
+  },
+
+  // ---- Messaging ---------------------------------------------------------
+  {
+    id: "messaging-overview",
+    audience: "all",
+    category: "Messaging",
+    question: "How does messaging work?",
+    keywords: ["message", "messaging", "chat", "thread", "talk", "contact", "communicate", "inbox", "unread"],
+    answer:
+      "Messages is a direct thread between you and our team — one conversation per project. The sidebar shows an unread badge when there's something new.\n\nIt's more than chat: we can attach quotes, invoices, and approval requests as interactive cards you can act on without leaving the conversation.",
+    related: ["messaging-actionable", "unread-badge"],
+  },
+  {
+    id: "messaging-actionable",
+    audience: "all",
+    category: "Messaging",
+    question: "What are actionable message cards?",
+    keywords: ["actionable", "card", "attach", "button", "inline", "approve in chat", "quote card", "invoice card"],
+    answer:
+      "Instead of just linking to things, the thread can carry action cards:\n- Quote card — review and Accept/Decline inline\n- Invoice card — see the amount and status at a glance\n- Approval card — sign off a project stage with one click\n\nThe action happens right there in the conversation, so nothing gets lost in a separate tab.",
+    related: ["accept-quote", "awaiting-approval", "messaging-overview"],
+  },
+  {
+    id: "unread-badge",
+    audience: "all",
+    category: "Messaging",
+    question: "How do unread message notifications work?",
+    keywords: ["unread", "badge", "notification", "new message", "count", "seen", "read"],
+    answer:
+      "The Messages item in the sidebar shows a count of unread messages. Opening a thread marks it read, and the badge clears. It's tracked per person, so your read state is your own.",
+    related: ["messaging-overview"],
+  },
+  {
+    id: "send-message-admin",
+    audience: "admin",
+    category: "Messaging",
+    question: "How do I see and reply to client messages?",
+    keywords: ["client message", "reply", "respond", "inbox", "where messages", "see messages"],
+    answer:
+      "The Messages inbox lists every client conversation with the latest snippet and unread count. Open one to reply, and use the composer to attach a quote, invoice, or stage approval as an action card the client can act on directly.",
+    related: ["messaging-actionable", "advance-stage-admin"],
+  },
+
+  // ---- Admin: CRM --------------------------------------------------------
+  {
+    id: "deals-pipeline",
+    audience: "admin",
+    category: "CRM",
+    question: "How do deals and the pipeline work?",
+    keywords: ["deal", "deals", "pipeline", "lead", "opportunity", "stage", "won", "lost", "value"],
+    answer:
+      "Deals track opportunities before they become projects. Each deal has a value and a stage (Lead → … → Won/Lost). The Deals page totals your open pipeline.\n\nWhen a deal is ready to price, link it to a quotation; accepting that quote turns the opportunity into a live project.",
+    related: ["create-quote-admin", "clients-admin"],
+  },
+  {
+    id: "clients-admin",
+    audience: "admin",
+    category: "CRM",
+    question: "How do I add a client and give them portal access?",
+    keywords: ["client", "company", "add client", "new client", "invite", "access", "portal access"],
+    answer:
+      "Go to Clients → \"New client\" to create a company workspace with its contact details. Projects, quotes, and invoices get attached to that company.\n\nA person gets portal access when their account is linked to the company and they sign in with Google using the invited email.",
+    related: ["deals-pipeline", "sign-in"],
+  },
+  {
+    id: "admin-overview",
+    audience: "admin",
+    category: "CRM",
+    question: "What's on the admin dashboard?",
+    keywords: ["dashboard", "overview", "home", "admin home", "metrics", "summary", "attention"],
+    answer:
+      "The Overview surfaces what needs attention: active projects, open pipeline value, pending quotes, outstanding and overdue invoices, and projects awaiting client approval — each linking straight to the relevant list.",
+    related: ["deals-pipeline", "stage-billing"],
+  },
+
+  // ---- Account & settings ------------------------------------------------
+  {
+    id: "sign-in",
+    audience: "all",
+    category: "Account",
+    question: "How do I sign in?",
+    keywords: ["sign in", "login", "log in", "google", "access", "account", "auth"],
+    answer:
+      "Sign in with Google using the email you were invited with. Access is invite-only: clients see their company's workspace, and our team gets the admin side. If Google says you don't have access, the email isn't linked yet — message us and we'll add it.",
+    related: ["clients-admin"],
+  },
+  {
+    id: "theme",
+    audience: "all",
+    category: "Account",
+    question: "How do I switch between light and dark mode?",
+    keywords: ["theme", "dark", "light", "mode", "appearance", "toggle", "color"],
+    answer:
+      "Use the sun/moon button in the top bar to toggle light or dark mode. Your choice is remembered on this device.",
+  },
+  {
+    id: "mobile",
+    audience: "all",
+    category: "Account",
+    question: "Does the app work on mobile?",
+    keywords: ["mobile", "phone", "responsive", "tablet", "app", "device"],
+    answer:
+      "Yes — the whole portal and admin are responsive. On small screens the sidebar becomes a slide-out menu and tables switch to stacked cards, so everything stays usable on a phone.",
+  },
+];
+
+// Starter questions shown before the user types anything.
+export const STARTERS: Record<Audience, string[]> = {
+  client: [
+    "How do project stages work?",
+    "How does stage-based billing work?",
+    "How do I accept a quotation?",
+    "How do I pay an invoice?",
+    "What are actionable message cards?",
+  ],
+  admin: [
+    "How do I create and send a quotation?",
+    "How does milestone billing work?",
+    "How do I request a client sign-off?",
+    "How do I generate a PDF proposal?",
+    "How do deals and the pipeline work?",
+  ],
+};
+
+const STOPWORDS = new Set([
+  "the", "a", "an", "is", "are", "do", "does", "how", "what", "i", "to", "of",
+  "in", "on", "and", "or", "for", "my", "me", "this", "that", "it", "with",
+  "can", "you", "we", "work", "works", "app", "use", "about", "where", "when",
+  "which", "get", "got", "be", "as", "if",
+]);
+
+function tokenize(text: string): string[] {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9₹\s]/g, " ")
+    .split(/\s+/)
+    .filter((t) => t.length > 1 && !STOPWORDS.has(t));
+}
+
+export function entriesFor(audience: Audience): KbEntry[] {
+  return KB.filter((e) => e.audience === "all" || e.audience === audience);
+}
+
+export function getEntry(id: string, audience: Audience): KbEntry | undefined {
+  return entriesFor(audience).find((e) => e.id === id);
+}
+
+export type Match = { entry: KbEntry; score: number };
+
+/** Score the knowledge base against a free-text query for the given audience. */
+export function search(query: string, audience: Audience): Match[] {
+  const qTokens = tokenize(query);
+  if (qTokens.length === 0) return [];
+  const qSet = new Set(qTokens);
+
+  const scored = entriesFor(audience).map((entry) => {
+    const haystack = [
+      ...tokenize(entry.question),
+      ...entry.keywords.flatMap((k) => tokenize(k)),
+      ...tokenize(entry.category),
+    ];
+    const hay = new Set(haystack);
+
+    let score = 0;
+    for (const t of qSet) {
+      if (hay.has(t)) score += 2;
+      else if ([...hay].some((h) => h.includes(t) || t.includes(h))) score += 1;
+    }
+    // Bonus when the query phrase appears in the question directly.
+    const ql = query.toLowerCase();
+    for (const kw of entry.keywords) {
+      if (ql.includes(kw.toLowerCase())) score += 1.5;
+    }
+    return { entry, score };
+  });
+
+  return scored
+    .filter((m) => m.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4);
+}
+
+export const NO_MATCH =
+  "I don't have a written answer for that yet. Try rephrasing, pick a suggested question below, or message our team directly — they'll get back to you in your thread.";

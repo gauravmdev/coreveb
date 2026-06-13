@@ -21,6 +21,7 @@ export default async function PortalLayout({
     { label: "Messages", href: "/portal/messages", icon: "chat", badge: unread },
     { label: "Quotations", href: "/portal/quotations", icon: "doc" },
     { label: "Invoices", href: "/portal/invoices", icon: "receipt" },
+    { label: "AI Help", href: "/portal/assistant", icon: "spark" },
   ];
 
   return (
