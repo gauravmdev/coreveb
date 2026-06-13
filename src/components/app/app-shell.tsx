@@ -52,7 +52,7 @@ export function AppShell({
               alt="Coreveb"
               width={931}
               height={334}
-              className="h-6 w-auto mix-blend-screen"
+              className="h-8 w-auto mix-blend-screen"
             />
           </span>
         </Link>
