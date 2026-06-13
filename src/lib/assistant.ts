@@ -64,6 +64,32 @@ export const KB: KbEntry[] = [
     related: ["project-stages", "messaging-actionable"],
   },
   {
+    id: "find-my-projects",
+    audience: "client",
+    category: "Projects",
+    question: "Where do I see my projects and their progress?",
+    keywords: [
+      "find project", "my projects", "see project", "where project", "view project",
+      "project list", "dashboard", "overview", "progress", "current stage",
+    ],
+    answer:
+      "Your Overview lists every project we're running for you. Click one to open its stage timeline, where the highlighted stage shows exactly where the work is right now and what's already done.\n\nIf a project needs something from you, it's flagged as awaiting approval and you'll also get an approval card in Messages.",
+    related: ["project-stages", "awaiting-approval", "request-changes"],
+  },
+  {
+    id: "request-changes",
+    audience: "client",
+    category: "Projects",
+    question: "Can I request changes or revisions?",
+    keywords: [
+      "change", "changes", "revision", "revise", "edit", "feedback", "rework",
+      "not happy", "adjust", "modify", "fix", "tweak",
+    ],
+    answer:
+      "Yes. Just reply in your Messages thread for that project and tell us what you'd like changed — it keeps everything in one place tied to the work.\n\nIf a stage is awaiting your approval, you don't have to approve it as-is: ask for the changes first, and we'll update the work before it moves to the next stage.",
+    related: ["awaiting-approval", "change-scope", "messaging-overview"],
+  },
+  {
     id: "advance-stage-admin",
     audience: "admin",
     category: "Projects",
@@ -265,7 +291,114 @@ export const KB: KbEntry[] = [
     related: ["deals-pipeline", "stage-billing"],
   },
 
+  // ---- Working with us ---------------------------------------------------
+  {
+    id: "project-timeline",
+    audience: "all",
+    category: "Working with us",
+    question: "How long will my project take and how do I know what's next?",
+    keywords: [
+      "how long", "timeline", "duration", "deadline", "eta", "when done",
+      "when finished", "delivery date", "schedule", "next step", "what's next",
+      "time", "estimate time",
+    ],
+    answer:
+      "Timelines depend on the scope agreed in your quotation, so they vary by project. The clearest live picture is the stage timeline on your project — the highlighted stage is the current work and the stages after it are what's coming up.\n\nFor specific dates or an ETA on the current stage, just ask in your Messages thread and we'll confirm.",
+    related: ["project-stages", "get-support", "scope-agreed"],
+  },
+  {
+    id: "get-support",
+    audience: "client",
+    category: "Working with us",
+    question: "How do I get help or contact your team?",
+    keywords: [
+      "support", "help", "contact", "reach", "talk to", "speak", "question",
+      "assistance", "get in touch", "someone", "human",
+    ],
+    answer:
+      "Your Messages thread is the direct line to us — send a message there any time and it stays tied to your project so nothing gets lost.\n\nFor quick \"how does this work\" questions, this AI Help page has you covered. For anything about your specific project, billing, or a change, message the team.",
+    related: ["messaging-overview", "request-changes", "notifications"],
+  },
+  {
+    id: "change-scope",
+    audience: "client",
+    category: "Working with us",
+    question: "Can I add work or expand the scope mid-project?",
+    keywords: [
+      "add work", "extra", "expand", "more features", "additional", "new scope",
+      "scope change", "add scope", "increase", "out of scope", "extend",
+    ],
+    answer:
+      "Absolutely. Tell us what you'd like to add in your Messages thread and we'll send a new quotation covering just the additional work.\n\nOnce you accept it, that scope is added and billed alongside your existing project — so the original agreement stays clear and the new work is priced separately.",
+    related: ["request-changes", "what-is-quotation", "stage-billing"],
+  },
+  {
+    id: "scope-agreed",
+    audience: "client",
+    category: "Working with us",
+    question: "Where can I see exactly what was agreed?",
+    keywords: [
+      "scope", "agreed", "what was agreed", "deliverables", "included", "contract",
+      "terms", "what's included", "agreement", "line items",
+    ],
+    answer:
+      "Your accepted quotation is the record of what was agreed — open Quotations to see its line items, totals, and terms. That's the scope the project is built against.\n\nIf something looks different from what you expected, message us and we'll sort it out.",
+    related: ["what-is-quotation", "change-scope", "currency"],
+  },
+  {
+    id: "after-launch",
+    audience: "all",
+    category: "Working with us",
+    question: "What happens after my project launches?",
+    keywords: [
+      "after launch", "launched", "go live", "live", "maintenance", "support after",
+      "warranty", "post launch", "ongoing", "finished", "complete", "handover",
+    ],
+    answer:
+      "Launch is the final stage of the project. Once you're live, the project shows as completed and the work is handed over.\n\nAny ongoing support, maintenance, or new improvements are arranged as their own quotation — just message us about what you need after launch.",
+    related: ["project-stages", "change-scope", "get-support"],
+  },
+  {
+    id: "notifications",
+    audience: "client",
+    category: "Working with us",
+    question: "How will I know when there's an update?",
+    keywords: [
+      "notification", "notify", "update", "alert", "know when", "new message",
+      "informed", "told", "badge", "see updates",
+    ],
+    answer:
+      "When we send something — a reply, a quote, an invoice, or an approval request — it shows up in your Messages thread and the Messages item in the sidebar gets an unread badge with the count.\n\nSo checking the portal (especially Messages) is the place to catch every update on your project and billing.",
+    related: ["unread-badge", "messaging-actionable", "get-support"],
+  },
+
   // ---- Account & settings ------------------------------------------------
+  {
+    id: "multiple-users",
+    audience: "client",
+    category: "Account",
+    question: "Can my teammates also access the portal?",
+    keywords: [
+      "team", "teammate", "colleague", "multiple users", "add user", "another person",
+      "invite", "share access", "more people", "staff",
+    ],
+    answer:
+      "Yes — your company can have more than one person with portal access. Each person signs in with their own Google email, and they all see the same company workspace: your projects, quotes, and invoices.\n\nTo add someone, message us with their email and we'll invite them.",
+    related: ["sign-in", "data-security", "get-support"],
+  },
+  {
+    id: "data-security",
+    audience: "all",
+    category: "Account",
+    question: "Is my data secure and who can see it?",
+    keywords: [
+      "secure", "security", "privacy", "private", "safe", "who can see", "data",
+      "confidential", "protected", "access control", "other clients",
+    ],
+    answer:
+      "Access is invite-only through Google sign-in — there's no public sign-up. You only ever see your own company's workspace: your projects, quotations, invoices, and messages.\n\nYou can't see other clients, and internal sales records (like our deals pipeline) are never visible to clients at all.",
+    related: ["sign-in", "multiple-users"],
+  },
   {
     id: "sign-in",
     audience: "all",
@@ -300,10 +433,12 @@ export const KB: KbEntry[] = [
 export const STARTERS: Record<Audience, string[]> = {
   client: [
     "How do project stages work?",
-    "How does stage-based billing work?",
+    "Can I request changes or revisions?",
+    "How long will my project take?",
     "How do I accept a quotation?",
+    "How does stage-based billing work?",
     "How do I pay an invoice?",
-    "What are actionable message cards?",
+    "How do I get help or contact your team?",
   ],
   admin: [
     "What's the difference between a deal and a quotation?",
