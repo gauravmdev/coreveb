@@ -76,6 +76,19 @@ export const KB: KbEntry[] = [
 
   // ---- Quotations --------------------------------------------------------
   {
+    id: "deal-vs-quote",
+    audience: "all",
+    category: "Quotations",
+    question: "What's the difference between a deal and a quotation?",
+    keywords: [
+      "deal vs quote", "difference", "deal and quotation", "deal or quote",
+      "deal quotation", "pipeline vs quote", "lead vs quote", "compare",
+    ],
+    answer:
+      "They're two steps of turning a prospect into paid work:\n- Deal — an opportunity you track before anything is agreed: a title, estimated value (₹), contact, and a stage (Lead → … → Won/Lost). It's internal pipeline only; clients never see deals.\n- Quotation — the priced scope you send the client: line items, GST, and a total they review and Accept or Decline.\n\nHow they connect: a deal is the lead → you create a quotation (optionally linked to that deal) → when the client accepts it, a project is created automatically and the deal is effectively won.\n\nSo a deal answers \"who might buy,\" and a quotation answers \"here's the price — do you agree?\"",
+    related: ["deals-pipeline", "what-is-quotation", "quote-to-project"],
+  },
+  {
     id: "what-is-quotation",
     audience: "all",
     category: "Quotations",
@@ -83,7 +96,7 @@ export const KB: KbEntry[] = [
     keywords: ["quotation", "quote", "estimate", "proposal", "pricing", "scope", "line items"],
     answer:
       "A quotation is the priced scope for a piece of work — a list of line items, a tax line (GST), and a total in INR. It's what you review before work starts.\n\nQuotes have a status: Draft, Sent, Accepted, or Declined. Once accepted, it locks in the scope and kicks off a project.",
-    related: ["accept-quote", "quote-to-project", "what-is-proposal"],
+    related: ["deal-vs-quote", "accept-quote", "quote-to-project"],
   },
   {
     id: "accept-quote",
@@ -229,7 +242,7 @@ export const KB: KbEntry[] = [
     keywords: ["deal", "deals", "pipeline", "lead", "opportunity", "stage", "won", "lost", "value"],
     answer:
       "Deals track opportunities before they become projects. Each deal has a value and a stage (Lead → … → Won/Lost). The Deals page totals your open pipeline.\n\nWhen a deal is ready to price, link it to a quotation; accepting that quote turns the opportunity into a live project.",
-    related: ["create-quote-admin", "clients-admin"],
+    related: ["deal-vs-quote", "create-quote-admin", "clients-admin"],
   },
   {
     id: "clients-admin",
@@ -293,6 +306,7 @@ export const STARTERS: Record<Audience, string[]> = {
     "What are actionable message cards?",
   ],
   admin: [
+    "What's the difference between a deal and a quotation?",
     "How do I create and send a quotation?",
     "How does milestone billing work?",
     "How do I request a client sign-off?",
