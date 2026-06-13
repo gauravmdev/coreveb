@@ -16,8 +16,8 @@ export function SiteHeader() {
           <Image
             src="/coreveb-logo-dark.png"
             alt="Coreveb — Software & Digital Marketing"
-            width={1110}
-            height={397}
+            width={966}
+            height={280}
             priority
             className="h-9 w-auto"
           />

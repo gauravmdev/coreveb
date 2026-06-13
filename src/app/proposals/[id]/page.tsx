@@ -61,8 +61,8 @@ export default async function ProposalPage({
           <Image
             src="/coreveb-logo-dark.png"
             alt="Coreveb"
-            width={1110}
-            height={397}
+            width={966}
+            height={280}
             className="h-20 w-auto self-start"
             priority
           />
@@ -228,8 +228,8 @@ export default async function ProposalPage({
             <Image
               src="/coreveb-logo-dark.png"
               alt="Coreveb"
-              width={1110}
-              height={397}
+              width={966}
+              height={280}
               className="mb-4 h-12 w-auto"
             />
             {site.url.replace("https://", "")} · {site.email}

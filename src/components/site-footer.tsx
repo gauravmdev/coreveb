@@ -13,8 +13,8 @@ export function SiteFooter() {
               <Image
                 src="/coreveb-logo-dark.png"
                 alt="Coreveb — Software & Digital Marketing"
-                width={1110}
-                height={397}
+                width={966}
+                height={280}
                 className="h-12 w-auto"
               />
             </Link>

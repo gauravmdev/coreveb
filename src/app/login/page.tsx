@@ -58,8 +58,8 @@ export default async function LoginPage({
           <Image
             src="/coreveb-logo-dark.png"
             alt="Coreveb"
-            width={1110}
-            height={397}
+            width={966}
+            height={280}
             className="h-11 w-auto"
             priority
           />

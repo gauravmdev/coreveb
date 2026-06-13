@@ -49,8 +49,8 @@ export function AppShell({
           <Image
             src={theme === "light" ? "/coreveb-logo-light.png" : "/coreveb-logo-dark.png"}
             alt="Coreveb"
-            width={1110}
-            height={397}
+            width={966}
+            height={280}
             className="h-9 w-auto"
             priority
           />
