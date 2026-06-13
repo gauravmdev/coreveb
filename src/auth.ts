@@ -69,6 +69,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: { signIn: "/login" },
   providers,
   callbacks: {
+    // Ensure the configured ADMIN_EMAIL always has the admin role — promotes
+    // an existing client account too (roles are otherwise set only at creation).
+    async signIn({ user }) {
+      const adminEmail = (
+        process.env.ADMIN_EMAIL ?? "admin@coreveb.com"
+      ).toLowerCase();
+      if (user?.id && user.email?.toLowerCase() === adminEmail) {
+        await db.update(users).set({ role: "admin" }).where(eq(users.id, user.id));
+      }
+      return true;
+    },
     jwt({ token, user }) {
       if (user?.id) token.id = user.id;
       return token;
