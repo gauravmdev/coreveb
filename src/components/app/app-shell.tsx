@@ -46,7 +46,7 @@ export function AppShell({
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center gap-2.5 px-5">
         <Link href="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
-          <span className="rounded-lg bg-[#0a0f1c] px-2 py-1.5">
+          <span className="rounded-xl bg-gradient-to-br from-[#0a0f1c] to-[#172a4a] px-2.5 py-1.5 shadow-sm ring-1 ring-white/10">
             <Image
               src="/coreveb-logo.png"
               alt="Coreveb"
