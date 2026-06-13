@@ -1,5 +1,6 @@
 import { Hero } from "@/components/sections/hero";
 import { Stats } from "@/components/sections/stats";
+import { Partners } from "@/components/sections/partners";
 import { TechMarquee } from "@/components/sections/marquee";
 import { Services } from "@/components/sections/services";
 import { AICapabilities } from "@/components/sections/ai-capabilities";
@@ -14,6 +15,7 @@ export default function HomePage() {
       <Hero />
       <div className="space-y-14 py-14">
         <Stats />
+        <Partners />
         <TechMarquee />
       </div>
       <Services />
