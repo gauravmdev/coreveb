@@ -2,6 +2,7 @@ import Link from "next/link";
 import { listCompanies } from "@/lib/queries";
 import { formatDate } from "@/lib/crm";
 import { Field, Panel, Submit, inputCls } from "@/components/app/form";
+import { PageHeader } from "@/components/app/ui";
 import { createCompany } from "@/app/admin/actions";
 
 export default async function AdminClients() {
@@ -9,10 +10,8 @@ export default async function AdminClients() {
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="text-3xl font-semibold tracking-tight">Clients</h1>
-        <p className="mt-1 text-muted">Companies you work with.</p>
-      </header>
+      <PageHeader title="Clients" description="Companies you work with." />
+
 
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         <div>

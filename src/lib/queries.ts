@@ -405,14 +405,36 @@ export async function getAdminOverview() {
     .from(quotations)
     .where(eq(quotations.status, "sent"));
 
+  const [overdue] = await db
+    .select({
+      c: sql<number>`count(*)::int`,
+      total: sql<number>`coalesce(sum(${invoices.amount}), 0)::float8`,
+    })
+    .from(invoices)
+    .where(eq(invoices.status, "overdue"));
+
+  const [activeProjects] = await db
+    .select({ c: sql<number>`count(*)::int` })
+    .from(projects)
+    .where(eq(projects.status, "active"));
+
+  const [awaitingApprovals] = await db
+    .select({ c: sql<number>`count(*)::int` })
+    .from(projects)
+    .where(eq(projects.awaitingApproval, true));
+
   return {
     companies: await count(companies),
     projects: await count(projects),
+    activeProjects: activeProjects?.c ?? 0,
     deals: await count(deals),
     quotations: await count(quotations),
     pendingQuotes: pendingQuotes?.c ?? 0,
     invoices: await count(invoices),
     outstanding: openInvoices?.total ?? 0,
+    overdueCount: overdue?.c ?? 0,
+    overdueAmount: overdue?.total ?? 0,
+    awaitingApprovals: awaitingApprovals?.c ?? 0,
     wonValue: wonValue?.total ?? 0,
   };
 }

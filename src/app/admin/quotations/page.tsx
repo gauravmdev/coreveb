@@ -8,6 +8,7 @@ import {
 import { Badge } from "@/components/app/badge";
 import { Field, Panel, Submit, inputCls } from "@/components/app/form";
 import { QUOTE_STATUS, formatCurrency } from "@/lib/crm";
+import { PageHeader } from "@/components/app/ui";
 import { createQuotation } from "@/app/admin/actions";
 
 export default async function AdminQuotations() {
@@ -18,13 +19,11 @@ export default async function AdminQuotations() {
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="text-3xl font-semibold tracking-tight">Quotations</h1>
-        <p className="mt-1 text-muted">
-          Send a quote; when the client accepts it, a project is created
-          automatically.
-        </p>
-      </header>
+      <PageHeader
+        title="Quotations"
+        description="Send a quote; when the client accepts it, a project is created automatically."
+      />
+
 
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         <div>

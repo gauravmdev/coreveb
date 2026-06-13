@@ -11,6 +11,7 @@ import {
   quoteTotals,
   type ProjectType,
 } from "@/lib/crm";
+import { PageHeader } from "@/components/app/ui";
 import { acceptQuotation, declineQuotation } from "@/app/portal/actions";
 
 export default async function PortalQuotations() {
@@ -27,12 +28,11 @@ export default async function PortalQuotations() {
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="text-3xl font-semibold tracking-tight">Quotations</h1>
-        <p className="mt-1 text-muted">
-          Review and accept quotes. Accepting one kicks off the project right away.
-        </p>
-      </header>
+      <PageHeader
+        title="Quotations"
+        description="Review and accept quotes. Accepting one kicks off the project right away."
+      />
+
 
       <div className="space-y-4">
         {quotes.map(({ quote, items }) => {

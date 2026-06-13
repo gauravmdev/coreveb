@@ -6,6 +6,7 @@ import {
   DEAL_STAGES,
   formatCurrency,
 } from "@/lib/crm";
+import { PageHeader } from "@/components/app/ui";
 import { createDeal, setDealStage } from "@/app/admin/actions";
 
 export default async function AdminDeals() {
@@ -18,14 +19,11 @@ export default async function AdminDeals() {
 
   return (
     <div className="space-y-8">
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Deals</h1>
-          <p className="mt-1 text-muted">
-            {formatCurrency(pipelineValue)} in open pipeline.
-          </p>
-        </div>
-      </header>
+      <PageHeader
+        title="Deals"
+        description={`${formatCurrency(pipelineValue)} in open pipeline.`}
+      />
+
 
       <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
         <div>

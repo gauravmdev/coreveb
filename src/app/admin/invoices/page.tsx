@@ -11,6 +11,7 @@ import {
   formatCurrency,
   formatDate,
 } from "@/lib/crm";
+import { PageHeader } from "@/components/app/ui";
 import { createInvoice, setInvoiceStatus } from "@/app/admin/actions";
 
 export default async function AdminInvoices() {
@@ -24,10 +25,11 @@ export default async function AdminInvoices() {
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="text-3xl font-semibold tracking-tight">Invoices</h1>
-        <p className="mt-1 text-muted">{formatCurrency(outstanding)} outstanding.</p>
-      </header>
+      <PageHeader
+        title="Invoices"
+        description={`${formatCurrency(outstanding)} outstanding.`}
+      />
+
 
       <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
         <div>

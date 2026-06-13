@@ -1,6 +1,7 @@
 import { requireUser } from "@/lib/session";
 import { getConversations } from "@/lib/queries";
 import { InboxList } from "@/components/app/inbox-list";
+import { PageHeader } from "@/components/app/ui";
 
 export default async function PortalMessages() {
   const user = await requireUser();
@@ -8,10 +9,7 @@ export default async function PortalMessages() {
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="text-3xl font-semibold tracking-tight">Messages</h1>
-        <p className="mt-1 text-muted">Your conversations with the Coreveb team.</p>
-      </header>
+      <PageHeader title="Messages" description="Your conversations with the Coreveb team." />
       <InboxList
         conversations={conversations}
         basePath="/portal/messages"

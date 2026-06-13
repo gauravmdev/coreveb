@@ -9,6 +9,7 @@ import {
   projectProgress,
   type ProjectType,
 } from "@/lib/crm";
+import { PageHeader } from "@/components/app/ui";
 import { updateProjectProgress } from "@/app/admin/actions";
 
 export default async function AdminProjects() {
@@ -16,12 +17,11 @@ export default async function AdminProjects() {
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="text-3xl font-semibold tracking-tight">Projects</h1>
-        <p className="mt-1 text-muted">
-          Move projects through their stages — clients see this instantly.
-        </p>
-      </header>
+      <PageHeader
+        title="Projects"
+        description="Move projects through their stages — clients see this instantly."
+      />
+
 
       <div className="space-y-4">
         {rows.map(({ project: p, companyName }) => {

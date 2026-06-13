@@ -1,6 +1,7 @@
 import { requireUser } from "@/lib/session";
 import { getCompanyInvoices } from "@/lib/queries";
 import { Badge } from "@/components/app/badge";
+import { PageHeader } from "@/components/app/ui";
 import { INVOICE_STATUS, formatCurrency, formatDate } from "@/lib/crm";
 
 export default async function PortalInvoices() {
@@ -14,12 +15,11 @@ export default async function PortalInvoices() {
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="text-3xl font-semibold tracking-tight">Invoices</h1>
-        <p className="mt-1 text-muted">
-          {formatCurrency(due)} outstanding · {formatCurrency(paid)} paid to date
-        </p>
-      </header>
+      <PageHeader
+        title="Invoices"
+        description={`${formatCurrency(due)} outstanding · ${formatCurrency(paid)} paid to date`}
+      />
+
 
       {/* Table on sm+ */}
       <div className="hidden overflow-x-auto rounded-2xl border border-border sm:block">

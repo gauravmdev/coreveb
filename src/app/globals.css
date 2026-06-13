@@ -30,12 +30,12 @@
 }
 
 .theme-light {
-  --color-bg: #e7eaf1;
-  --color-bg-soft: #eef1f6;
-  --color-surface: #ffffff;
-  --color-border: #cdd4e0;
+  --color-bg: #dce0ea;
+  --color-bg-soft: #e6eaf1;
+  --color-surface: #f1f3f8;
+  --color-border: #c4ccda;
   --color-fg: #0e1424;
-  --color-muted: #515b71;
+  --color-muted: #4d566c;
 }
 
 html {
