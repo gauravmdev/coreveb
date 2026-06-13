@@ -14,7 +14,9 @@ import {
 const providers: NextAuthConfig["providers"] = [];
 
 if (process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET) {
-  providers.push(Google);
+  // Google verifies emails, so linking by email to an existing (invited)
+  // account is safe and lets pre-invited clients sign in with Google.
+  providers.push(Google({ allowDangerousEmailAccountLinking: true }));
 }
 
 if (process.env.AUTH_DEV_LOGIN === "true") {
@@ -69,16 +71,36 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: { signIn: "/login" },
   providers,
   callbacks: {
-    // Ensure the configured ADMIN_EMAIL always has the admin role — promotes
-    // an existing client account too (roles are otherwise set only at creation).
+    // Gate who may sign in, and keep the admin account promoted.
     async signIn({ user }) {
+      const email = (user.email ?? "").toLowerCase();
+      if (!email) return false;
       const adminEmail = (
         process.env.ADMIN_EMAIL ?? "admin@coreveb.com"
       ).toLowerCase();
-      if (user?.id && user.email?.toLowerCase() === adminEmail) {
-        await db.update(users).set({ role: "admin" }).where(eq(users.id, user.id));
+
+      const [dbUser] = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
+
+      // The configured admin is always allowed and (re)promoted to admin.
+      if (email === adminEmail) {
+        if (dbUser) {
+          await db
+            .update(users)
+            .set({ role: "admin" })
+            .where(eq(users.id, dbUser.id));
+        }
+        return true;
       }
-      return true;
+
+      // Otherwise only allow existing admins and admin-invited clients
+      // (a client is "invited" once linked to a company).
+      if (dbUser && (dbUser.role === "admin" || dbUser.companyId)) return true;
+
+      return false; // unknown / uninvited → denied
     },
     jwt({ token, user }) {
       if (user?.id) token.id = user.id;

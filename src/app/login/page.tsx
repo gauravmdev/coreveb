@@ -13,6 +13,13 @@ export const metadata: Metadata = {
 const googleEnabled = Boolean(process.env.AUTH_GOOGLE_ID);
 const devEnabled = process.env.AUTH_DEV_LOGIN === "true";
 
+const ERROR_MESSAGES: Record<string, string> = {
+  AccessDenied:
+    "This account isn't authorized yet. Ask your Coreveb contact to invite you.",
+  OAuthAccountNotLinked: "That email is already registered another way.",
+  Configuration: "Sign-in is temporarily unavailable. Please try again later.",
+};
+
 export default async function LoginPage({
   searchParams,
 }: {
@@ -20,7 +27,10 @@ export default async function LoginPage({
 }) {
   const session = await auth();
   if (session?.user) redirect("/portal");
-  const { error } = await searchParams;
+  const { error: errorCode } = await searchParams;
+  const error = errorCode
+    ? (ERROR_MESSAGES[errorCode] ?? errorCode)
+    : undefined;
 
   async function googleLogin() {
     "use server";
