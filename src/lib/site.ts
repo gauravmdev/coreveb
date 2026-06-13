@@ -1,0 +1,172 @@
+export const site = {
+  name: "Coreveb",
+  tagline: "AI-native software, mobile apps & digital marketing",
+  description:
+    "Coreveb is an AI-native product studio. We design, build, and grow digital products — pairing custom software, mobile apps, and intelligent automation with the marketing that gets them seen.",
+  email: "hello@coreveb.com",
+  phone: "+1 (555) 000-1234",
+  url: "https://coreveb.com",
+  socials: [
+    { label: "X", href: "https://x.com" },
+    { label: "LinkedIn", href: "https://linkedin.com" },
+    { label: "GitHub", href: "https://github.com" },
+    { label: "Dribbble", href: "https://dribbble.com" },
+  ],
+} as const;
+
+export const nav = [
+  { label: "Services", href: "/#services" },
+  { label: "AI", href: "/#ai" },
+  { label: "Work", href: "/#work" },
+  { label: "Process", href: "/#process" },
+  { label: "Contact", href: "/contact" },
+] as const;
+
+export const services = [
+  {
+    title: "AI Solutions",
+    blurb:
+      "Custom AI that ships — LLM-powered assistants, agents, RAG search, and automation wired straight into your product and workflows.",
+    points: ["AI agents & copilots", "RAG & semantic search", "Workflow automation"],
+    icon: "ai",
+  },
+  {
+    title: "Software Development",
+    blurb:
+      "Custom web apps, SaaS platforms, and internal tools built on a modern, type-safe stack that scales with you.",
+    points: ["Web & SaaS platforms", "APIs & integrations", "Cloud & DevOps"],
+    icon: "code",
+  },
+  {
+    title: "Mobile Apps",
+    blurb:
+      "Native-quality iOS and Android apps from a single codebase, with the polish users expect and the speed teams need.",
+    points: ["iOS & Android", "React Native / Expo", "App Store launch"],
+    icon: "device",
+  },
+  {
+    title: "Digital Marketing",
+    blurb:
+      "Data-driven campaigns that turn attention into pipeline — SEO, paid media, content, and brand that compounds.",
+    points: ["SEO & content", "Paid & social ads", "Brand & analytics"],
+    icon: "spark",
+  },
+] as const;
+
+export const stats = [
+  { value: "120+", label: "Products shipped" },
+  { value: "40+", label: "Active clients" },
+  { value: "10×", label: "Faster with AI" },
+  { value: "98%", label: "Client retention" },
+] as const;
+
+export const aiCapabilities = [
+  {
+    icon: "chat",
+    title: "Conversational AI & copilots",
+    body: "In-product assistants that answer questions, draft content, and guide users in plain language.",
+  },
+  {
+    icon: "search",
+    title: "RAG & knowledge retrieval",
+    body: "Answers grounded in your own docs, data, and tickets — with citations, not hallucinations.",
+  },
+  {
+    icon: "bot",
+    title: "Autonomous agents",
+    body: "Multi-step agents that plan, call your tools and APIs, and complete real tasks end to end.",
+  },
+  {
+    icon: "doc",
+    title: "Document intelligence",
+    body: "Extract, classify, and summarize PDFs, invoices, and contracts at scale.",
+  },
+  {
+    icon: "chart",
+    title: "Predictive analytics",
+    body: "Forecasting, scoring, and recommendations tuned to your data and your KPIs.",
+  },
+  {
+    icon: "shield",
+    title: "Evals & guardrails",
+    body: "Evaluation suites, guardrails, and observability so AI stays accurate, safe, and on-brand.",
+  },
+] as const;
+
+export const techStack = [
+  "OpenAI",
+  "Claude",
+  "Next.js",
+  "React Native",
+  "TypeScript",
+  "PostgreSQL",
+  "LangChain",
+  "Vector DB",
+  "AWS",
+  "Vercel",
+] as const;
+
+export const processSteps = [
+  {
+    step: "01",
+    title: "Discover",
+    body: "We dig into your goals, users, and market to define what's worth building — and what isn't.",
+  },
+  {
+    step: "02",
+    title: "Design",
+    body: "Wireframes, prototypes, and a design system your whole team can build against with confidence.",
+  },
+  {
+    step: "03",
+    title: "Build",
+    body: "AI-accelerated sprints with working software every two weeks. Fast, but never a black box.",
+  },
+  {
+    step: "04",
+    title: "Grow",
+    body: "Launch, measure, and iterate — pairing engineering with marketing so the product keeps compounding.",
+  },
+] as const;
+
+export const work = [
+  {
+    title: "Project Title",
+    category: "SaaS Platform",
+    blurb: "Short one-line summary of the platform you built and the outcome.",
+    tag: "Software",
+  },
+  {
+    title: "Project Title",
+    category: "Mobile App",
+    blurb: "Short one-line summary of the app and what it does for users.",
+    tag: "Mobile",
+  },
+  {
+    title: "Project Title",
+    category: "Performance Marketing",
+    blurb: "Short one-line summary of the campaign and the result it drove.",
+    tag: "Marketing",
+  },
+  {
+    title: "Project Title",
+    category: "Web App",
+    blurb: "Short one-line summary of the web app and the problem it solves.",
+    tag: "Software",
+  },
+] as const;
+
+export const testimonials = [
+  {
+    quote:
+      "Add a short client quote here about working with Coreveb and the results you delivered.",
+    name: "Client Name",
+    role: "Title, Company",
+  },
+  {
+    quote:
+      "Add a second client quote here highlighting a different strength — delivery speed, quality, or growth.",
+    name: "Client Name",
+    role: "Title, Company",
+  },
+] as const;
