@@ -200,8 +200,6 @@ export const aiCapabilities = [
   },
 ] as const;
 
-export const partners = ["Meta", "Hostinger", "Google"] as const;
-
 export const techStack = [
   "OpenAI",
   "Claude",
