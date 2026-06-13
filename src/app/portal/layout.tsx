@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/session";
 import { getUnreadTotal } from "@/lib/queries";
@@ -13,6 +14,7 @@ export default async function PortalLayout({
   const user = await requireUser();
   if (user.role === "admin") redirect("/admin");
   const unread = await getUnreadTotal(user);
+  const theme = (await cookies()).get("theme")?.value === "light" ? "light" : "dark";
 
   const nav: NavItem[] = [
     { label: "Overview", href: "/portal", icon: "grid" },
@@ -22,7 +24,7 @@ export default async function PortalLayout({
   ];
 
   return (
-    <AppShell user={user} nav={nav} area="Client portal">
+    <AppShell user={user} nav={nav} area="Client portal" theme={theme}>
       {children}
     </AppShell>
   );

@@ -19,16 +19,25 @@ export function AppShell({
   user,
   nav,
   area,
+  theme: initialTheme = "dark",
   children,
 }: {
   user: User;
   nav: NavItem[];
   area: "Client portal" | "Admin";
+  theme?: "dark" | "light";
   children: ReactNode;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">(initialTheme);
   const rootHref = nav[0]?.href;
+
+  function toggleTheme() {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.cookie = `theme=${next}; path=/; max-age=31536000; samesite=lax`;
+  }
 
   const isActive = (href: string) =>
     pathname === href || (href !== rootHref && pathname.startsWith(href));
@@ -37,13 +46,15 @@ export function AppShell({
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center gap-2.5 px-5">
         <Link href="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
-          <Image
-            src="/coreveb-logo.png"
-            alt="Coreveb"
-            width={931}
-            height={334}
-            className="h-7 w-auto mix-blend-screen"
-          />
+          <span className="rounded-lg bg-[#0a0f1c] px-2 py-1.5">
+            <Image
+              src="/coreveb-logo.png"
+              alt="Coreveb"
+              width={931}
+              height={334}
+              className="h-6 w-auto mix-blend-screen"
+            />
+          </span>
         </Link>
         <span className="rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-widest text-muted">
           {area === "Admin" ? "Admin" : "Portal"}
@@ -103,7 +114,7 @@ export function AppShell({
   );
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className={`theme-${theme} min-h-screen bg-bg text-fg`}>
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-border/60 bg-bg-soft lg:block">
         {sidebar}
@@ -136,7 +147,15 @@ export function AppShell({
           <span className="text-sm font-medium text-muted">
             {area === "Admin" ? "Admin" : "Client portal"}
           </span>
-          <span className="ml-auto grid h-8 w-8 place-items-center rounded-full bg-brand/20 text-xs font-semibold text-brand-soft lg:hidden">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="ml-auto grid h-9 w-9 place-items-center rounded-lg border border-border text-muted transition-colors hover:text-fg"
+          >
+            <Icon name={theme === "dark" ? "sun" : "moon"} className="h-[18px] w-[18px]" />
+          </button>
+          <span className="grid h-8 w-8 place-items-center rounded-full bg-brand/20 text-xs font-semibold text-brand-soft lg:hidden">
             {(user.name ?? user.email ?? "?").charAt(0).toUpperCase()}
           </span>
         </header>

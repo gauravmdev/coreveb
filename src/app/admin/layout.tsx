@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { requireAdmin } from "@/lib/session";
 import { getUnreadTotal } from "@/lib/queries";
 import { AppShell, type NavItem } from "@/components/app/app-shell";
@@ -11,6 +12,7 @@ export default async function AdminLayout({
 }) {
   const user = await requireAdmin();
   const unread = await getUnreadTotal(user);
+  const theme = (await cookies()).get("theme")?.value === "light" ? "light" : "dark";
 
   const nav: NavItem[] = [
     { label: "Overview", href: "/admin", icon: "grid" },
@@ -23,7 +25,7 @@ export default async function AdminLayout({
   ];
 
   return (
-    <AppShell user={user} nav={nav} area="Admin">
+    <AppShell user={user} nav={nav} area="Admin" theme={theme}>
       {children}
     </AppShell>
   );

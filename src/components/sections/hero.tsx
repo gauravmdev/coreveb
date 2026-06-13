@@ -22,7 +22,7 @@ export function Hero() {
           </div>
 
           <h1 className="mt-7 text-5xl font-semibold leading-[1.03] tracking-tight text-balance sm:text-6xl">
-            <span className="text-gradient drop-shadow-[0_0_40px_rgba(124,92,255,0.35)]">
+            <span className="text-gradient drop-shadow-[0_0_40px_rgba(43,123,255,0.35)]">
               AI-native products,
             </span>
             <br />

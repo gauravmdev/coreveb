@@ -1,21 +1,41 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #050509;
-  --color-bg-soft: #0b0c14;
-  --color-surface: #12131f;
-  --color-border: #242636;
-  --color-fg: #edeef7;
-  --color-muted: #9498b0;
-  --color-brand: #7c5cff;
-  --color-brand-soft: #9d8bff;
-  --color-accent: #19e3c4;
+  /* Dark (default) tokens. Brand = logo blue, accent = logo orange. */
+  --color-bg: #060810;
+  --color-bg-soft: #0c0f1a;
+  --color-surface: #131725;
+  --color-border: #232a3d;
+  --color-fg: #eef1f8;
+  --color-muted: #93a0bb;
+  --color-brand: #2b7bff;
+  --color-brand-soft: #6aa9ff;
+  --color-accent: #ff8a1e;
   --color-pink: #ff5fa2;
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  --shadow-glow: 0 0 0 1px rgba(124, 92, 255, 0.25), 0 24px 70px -24px rgba(124, 92, 255, 0.55);
+  --shadow-glow: 0 0 0 1px rgba(43, 123, 255, 0.25), 0 24px 70px -24px rgba(43, 123, 255, 0.5);
+}
+
+/* Explicit theme classes (applied to the app shell; cascade to the subtree). */
+.theme-dark {
+  --color-bg: #060810;
+  --color-bg-soft: #0c0f1a;
+  --color-surface: #131725;
+  --color-border: #232a3d;
+  --color-fg: #eef1f8;
+  --color-muted: #93a0bb;
+}
+
+.theme-light {
+  --color-bg: #f5f7fb;
+  --color-bg-soft: #ffffff;
+  --color-surface: #ffffff;
+  --color-border: #e4e8f0;
+  --color-fg: #111726;
+  --color-muted: #5b6578;
 }
 
 html {
@@ -30,7 +50,7 @@ body {
 }
 
 ::selection {
-  background: rgba(124, 92, 255, 0.4);
+  background: rgba(43, 123, 255, 0.4);
 }
 
 /* ---------- Animated aurora / mesh ---------- */
@@ -201,9 +221,9 @@ body {
   background: conic-gradient(
     from 180deg at 50% 0%,
     transparent 0deg,
-    rgba(124, 92, 255, 0.12) 65deg,
+    rgba(43, 123, 255, 0.12) 65deg,
     transparent 110deg,
-    rgba(25, 227, 196, 0.09) 250deg,
+    rgba(255, 138, 30, 0.09) 250deg,
     transparent 300deg
   );
   mask-image: radial-gradient(ellipse 70% 65% at 50% 0%, #000, transparent 78%);
@@ -222,7 +242,7 @@ body {
   z-index: -1;
   background: radial-gradient(
     230px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(124, 92, 255, 0.22),
+    rgba(43, 123, 255, 0.22),
     transparent 62%
   );
   opacity: 0;
@@ -259,8 +279,8 @@ body {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(124, 92, 255, 0.4) 18%,
-    rgba(25, 227, 196, 0.4) 82%,
+    rgba(43, 123, 255, 0.4) 18%,
+    rgba(255, 138, 30, 0.4) 82%,
     transparent
   );
 }
