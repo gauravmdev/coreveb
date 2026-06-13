@@ -4,6 +4,7 @@ import type { PgTable } from "drizzle-orm/pg-core";
 import { db } from "@/db";
 import {
   companies,
+  contactSubmissions,
   deals,
   invoices,
   messages,
@@ -446,4 +447,21 @@ export function listRecentNotes(limit = 8) {
     .leftJoin(companies, eq(notes.companyId, companies.id))
     .orderBy(desc(notes.createdAt))
     .limit(limit);
+}
+
+/* --------------------------------- Leads ---------------------------------- */
+
+export function listContactSubmissions() {
+  return db
+    .select()
+    .from(contactSubmissions)
+    .orderBy(desc(contactSubmissions.createdAt));
+}
+
+export async function countNewLeads() {
+  const [row] = await db
+    .select({ n: sql<number>`count(*)::int` })
+    .from(contactSubmissions)
+    .where(eq(contactSubmissions.status, "new"));
+  return row?.n ?? 0;
 }

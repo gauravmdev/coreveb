@@ -6,6 +6,7 @@ import { eq, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import {
   companies,
+  contactSubmissions,
   deals,
   invoices,
   milestones,
@@ -436,4 +437,16 @@ export async function addNote(formData: FormData) {
   });
   revalidatePath(`/admin/clients/${companyId}`);
   revalidatePath("/portal");
+}
+
+export async function setLeadStatus(formData: FormData) {
+  await requireAdmin();
+  const id = str(formData.get("id"));
+  const status = str(formData.get("status"));
+  if (!id || !["new", "read", "archived"].includes(status)) return;
+  await db
+    .update(contactSubmissions)
+    .set({ status: status as "new" | "read" | "archived" })
+    .where(eq(contactSubmissions.id, id));
+  revalidatePath("/admin/leads");
 }

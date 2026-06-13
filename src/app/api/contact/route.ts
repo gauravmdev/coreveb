@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { db } from "@/db";
+import { contactSubmissions } from "@/db/schema";
+import { site } from "@/lib/site";
 
 type ContactPayload = {
   name?: string;
@@ -10,6 +13,48 @@ type ContactPayload = {
 };
 
 const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+/** Best-effort email notification. No-op unless RESEND_API_KEY is configured. */
+async function notifyByEmail(lead: {
+  name: string;
+  email: string;
+  company: string | null;
+  service: string | null;
+  budget: string | null;
+  message: string;
+}) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return;
+  const to = process.env.CONTACT_NOTIFY_EMAIL ?? site.email;
+  const from = process.env.CONTACT_FROM_EMAIL ?? "Coreveb <onboarding@resend.dev>";
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from,
+        to,
+        reply_to: lead.email,
+        subject: `New enquiry — ${lead.name}`,
+        text: [
+          `Name: ${lead.name}`,
+          `Email: ${lead.email}`,
+          `Company: ${lead.company ?? "—"}`,
+          `Service: ${lead.service ?? "—"}`,
+          `Budget: ${lead.budget ?? "—"}`,
+          "",
+          lead.message,
+        ].join("\n"),
+      }),
+    });
+  } catch (err) {
+    // Don't fail the submission if email delivery hiccups.
+    console.error("[contact] email notify failed", err);
+  }
+}
 
 export async function POST(request: Request) {
   let body: ContactPayload;
@@ -36,16 +81,27 @@ export async function POST(request: Request) {
     );
   }
 
-  // TODO: wire up a real delivery channel — email (Resend), CRM, or a database.
-  // Logged for now so submissions are visible in development.
-  console.log("[contact] new submission", {
+  const lead = {
     name,
     email,
     company: body.company?.trim() || null,
-    service: body.service ?? null,
-    budget: body.budget ?? null,
+    service: body.service?.trim() || null,
+    budget: body.budget?.trim() || null,
     message,
-  });
+  };
+
+  try {
+    await db.insert(contactSubmissions).values(lead);
+  } catch (err) {
+    console.error("[contact] failed to save submission", err);
+    return NextResponse.json(
+      { error: "Something went wrong. Please email us directly." },
+      { status: 500 },
+    );
+  }
+
+  // Fire-and-forget email; never blocks the success response.
+  void notifyByEmail(lead);
 
   return NextResponse.json({ ok: true });
 }

@@ -282,6 +282,21 @@ export const proposalSections = pgTable("proposal_section", {
   position: integer("position").notNull().default(0),
 });
 
+/** Inbound leads from the public contact form. */
+export const contactSubmissions = pgTable("contact_submission", {
+  id: uuid(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  company: text("company"),
+  service: text("service"),
+  budget: text("budget"),
+  message: text("message").notNull(),
+  status: text("status", { enum: ["new", "read", "archived"] })
+    .notNull()
+    .default("new"),
+  createdAt: createdAt(),
+});
+
 export type User = typeof users.$inferSelect;
 export type Company = typeof companies.$inferSelect;
 export type Project = typeof projects.$inferSelect;
@@ -293,3 +308,4 @@ export type QuotationItem = typeof quotationItems.$inferSelect;
 export type Milestone = typeof milestones.$inferSelect;
 export type Message = typeof messages.$inferSelect;
 export type ProposalSection = typeof proposalSections.$inferSelect;
+export type ContactSubmission = typeof contactSubmissions.$inferSelect;

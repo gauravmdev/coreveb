@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { requireAdmin } from "@/lib/session";
-import { getUnreadTotal } from "@/lib/queries";
+import { countNewLeads, getUnreadTotal } from "@/lib/queries";
 import { AppShell, type NavItem } from "@/components/app/app-shell";
 
 export const dynamic = "force-dynamic";
@@ -12,10 +12,12 @@ export default async function AdminLayout({
 }) {
   const user = await requireAdmin();
   const unread = await getUnreadTotal(user);
+  const newLeads = await countNewLeads();
   const theme = (await cookies()).get("theme")?.value === "light" ? "light" : "dark";
 
   const nav: NavItem[] = [
     { label: "Overview", href: "/admin", icon: "grid" },
+    { label: "Leads", href: "/admin/leads", icon: "send", badge: newLeads },
     { label: "Clients", href: "/admin/clients", icon: "users" },
     { label: "Projects", href: "/admin/projects", icon: "folder" },
     { label: "Messages", href: "/admin/messages", icon: "chat", badge: unread },
