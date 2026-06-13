@@ -15,6 +15,13 @@
       "when": 1781363458317,
       "tag": "0001_nosy_paper_doll",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781363710517,
+      "tag": "0002_flaky_nemesis",
+      "breakpoints": true
     }
   ]
 }

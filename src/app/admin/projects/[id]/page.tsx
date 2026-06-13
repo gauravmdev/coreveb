@@ -21,8 +21,10 @@ import {
 } from "@/lib/crm";
 import {
   addProjectMilestone,
+  cancelStageApproval,
   deleteMilestone,
   generateMilestoneInvoice,
+  requestStageApproval,
   updateProjectProgress,
 } from "@/app/admin/actions";
 
@@ -96,6 +98,34 @@ export default async function AdminProjectDetail({
             Advancing a stage auto-invoices any payment due at it.
           </span>
         </form>
+
+        <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-border pt-5">
+          {project.awaitingApproval ? (
+            <>
+              <Badge tone="amber">Awaiting client sign-off</Badge>
+              <span className="text-sm text-muted">
+                on the {pStages[project.stageIndex]} stage
+              </span>
+              <form action={cancelStageApproval}>
+                <input type="hidden" name="projectId" value={project.id} />
+                <button
+                  type="submit"
+                  className="rounded-lg border border-border px-3 py-1.5 text-xs text-muted hover:border-brand/50 hover:text-fg"
+                >
+                  Cancel request
+                </button>
+              </form>
+            </>
+          ) : (
+            <form action={requestStageApproval} className="flex items-center gap-3">
+              <input type="hidden" name="projectId" value={project.id} />
+              <Submit>Request client sign-off</Submit>
+              <span className="text-xs text-muted">
+                Asks the client to approve the {pStages[project.stageIndex]} stage.
+              </span>
+            </form>
+          )}
+        </div>
       </Panel>
 
       <Panel title="Payment milestones">

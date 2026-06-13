@@ -26,6 +26,7 @@ import {
   releaseMilestones,
   syncMilestoneForInvoice,
 } from "@/lib/billing";
+import { stagesFor, type ProjectType } from "@/lib/crm";
 
 const str = (v: FormDataEntryValue | null) => String(v ?? "").trim();
 const num = (v: FormDataEntryValue | null) => {
@@ -118,6 +119,35 @@ export async function updateProjectProgress(formData: FormData) {
   await db.update(projects).set({ stageIndex, status }).where(eq(projects.id, id));
   await releaseMilestones(id, stageIndex);
   revalidatePath("/admin/projects");
+  revalidatePath(`/admin/projects/${id}`);
+  revalidatePath("/portal");
+}
+
+export async function requestStageApproval(formData: FormData) {
+  await requireAdmin();
+  const id = str(formData.get("projectId"));
+  if (!id) return;
+  const [project] = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
+  if (!project) return;
+
+  await db.update(projects).set({ awaitingApproval: true }).where(eq(projects.id, id));
+  const stage = stagesFor(project.type as ProjectType)[project.stageIndex] ?? "current";
+  await db.insert(notes).values({
+    body: `Sign-off requested on the ${stage} stage.`,
+    companyId: project.companyId,
+    projectId: id,
+    authorName: "Coreveb",
+    visibleToClient: true,
+  });
+  revalidatePath(`/admin/projects/${id}`);
+  revalidatePath("/portal");
+}
+
+export async function cancelStageApproval(formData: FormData) {
+  await requireAdmin();
+  const id = str(formData.get("projectId"));
+  if (!id) return;
+  await db.update(projects).set({ awaitingApproval: false }).where(eq(projects.id, id));
   revalidatePath(`/admin/projects/${id}`);
   revalidatePath("/portal");
 }

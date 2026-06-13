@@ -10,6 +10,7 @@ import {
 import { Badge } from "@/components/app/badge";
 import { StageTimeline } from "@/components/app/stage-timeline";
 import { MessageThread } from "@/components/app/message-thread";
+import { approveStage, requestStageChanges } from "@/app/portal/actions";
 import {
   MILESTONE_STATUS,
   PROJECT_STATUS,
@@ -65,6 +66,39 @@ export default async function ProjectDetail({
       <section className="rounded-2xl border border-border bg-surface/40 p-7">
         <h2 className="mb-6 text-lg font-semibold">Progress</h2>
         <StageTimeline project={project} />
+
+        {project.awaitingApproval && (
+          <div className="mt-6 rounded-xl border border-brand/40 bg-brand/10 p-5">
+            <p className="text-sm">
+              <span className="font-semibold text-fg">Your sign-off is requested</span>{" "}
+              on the{" "}
+              <span className="text-brand-soft">
+                {stages[project.stageIndex] ?? "current"}
+              </span>{" "}
+              stage. Approving moves the project to the next stage.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <form action={approveStage}>
+                <input type="hidden" name="projectId" value={project.id} />
+                <button
+                  type="submit"
+                  className="sheen rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white shadow-glow transition-colors hover:bg-brand-soft"
+                >
+                  Approve &amp; continue
+                </button>
+              </form>
+              <form action={requestStageChanges}>
+                <input type="hidden" name="projectId" value={project.id} />
+                <button
+                  type="submit"
+                  className="rounded-lg border border-border px-4 py-2 text-sm text-muted transition-colors hover:border-amber-500/50 hover:text-amber-300"
+                >
+                  Request changes
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
       </section>
 
       <MessageThread projectId={project.id} messages={thread} meRole="client" />

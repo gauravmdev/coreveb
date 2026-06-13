@@ -98,6 +98,8 @@ export const projects = pgTable("project", {
   }).notNull(),
   description: text("description"),
   stageIndex: integer("stage_index").notNull().default(0),
+  // Set when the admin requests the client's sign-off on the current stage.
+  awaitingApproval: boolean("awaiting_approval").notNull().default(false),
   status: text("status", {
     enum: ["active", "on_hold", "completed", "cancelled"],
   })
