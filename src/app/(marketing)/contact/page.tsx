@@ -45,22 +45,24 @@ export default function ContactPage() {
                 </a>
               </dd>
             </div>
-            <div className="flex gap-3">
-              <dt className="w-20 text-muted">Social</dt>
-              <dd className="flex gap-4">
-                {site.socials.map((s) => (
-                  <a
-                    key={s.label}
-                    href={s.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-brand-soft"
-                  >
-                    {s.label}
-                  </a>
-                ))}
-              </dd>
-            </div>
+            {site.socials.length > 0 && (
+              <div className="flex gap-3">
+                <dt className="w-20 text-muted">Social</dt>
+                <dd className="flex gap-4">
+                  {site.socials.map((s) => (
+                    <a
+                      key={s.label}
+                      href={s.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-brand-soft"
+                    >
+                      {s.label}
+                    </a>
+                  ))}
+                </dd>
+              </div>
+            )}
           </dl>
         </div>
 

@@ -7,18 +7,14 @@ export const site = {
   phone: "+91 79057 84798",
   whatsapp: "917905784798",
   url: "https://coreveb.com",
-  socials: [
-    { label: "X", href: "https://x.com" },
-    { label: "LinkedIn", href: "https://linkedin.com" },
-    { label: "GitHub", href: "https://github.com" },
-    { label: "Dribbble", href: "https://dribbble.com" },
-  ],
+  // Add your real profiles here to show them in the footer & contact page.
+  socials: [] as { label: string; href: string }[],
 } as const;
 
 export const nav = [
   { label: "Services", href: "/#services" },
   { label: "AI", href: "/#ai" },
-  { label: "Work", href: "/#work" },
+  { label: "IT Support", href: "/#managed-it" },
   { label: "Process", href: "/#process" },
   { label: "Contact", href: "/contact" },
 ] as const;
@@ -265,20 +261,5 @@ export const work = [
     blurb:
       "RAG assistant grounded in product docs that deflected 45% of support tickets.",
     tag: "AI",
-  },
-] as const;
-
-export const testimonials = [
-  {
-    quote:
-      "Add a short client quote here about working with Coreveb and the results you delivered.",
-    name: "Client Name",
-    role: "Title, Company",
-  },
-  {
-    quote:
-      "Add a second client quote here highlighting a different strength — delivery speed, quality, or growth.",
-    name: "Client Name",
-    role: "Title, Company",
   },
 ] as const;

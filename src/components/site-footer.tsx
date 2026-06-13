@@ -44,6 +44,24 @@ export function SiteFooter() {
                 Connect
               </h3>
               <ul className="mt-4 space-y-3">
+                <li>
+                  <a
+                    href={`mailto:${site.email}`}
+                    className="text-sm text-muted transition-colors hover:text-fg"
+                  >
+                    {site.email}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`https://wa.me/${site.whatsapp}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-sm text-muted transition-colors hover:text-fg"
+                  >
+                    WhatsApp
+                  </a>
+                </li>
                 {site.socials.map((s) => (
                   <li key={s.label}>
                     <a
