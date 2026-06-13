@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, ne, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import type { PgTable } from "drizzle-orm/pg-core";
 import { db } from "@/db";
 import {
@@ -85,6 +85,113 @@ export function getProjectMessages(projectId: string) {
     .from(messages)
     .where(eq(messages.projectId, projectId))
     .orderBy(messages.createdAt);
+}
+
+export type QuoteCard = {
+  id: string;
+  number: string;
+  title: string;
+  status: string;
+  currency: string;
+  total: number;
+};
+export type InvoiceCard = {
+  id: string;
+  number: string;
+  amount: number;
+  status: string;
+  dueAt: Date | null;
+};
+
+/** Loads a project's thread plus the data needed to render attachment cards. */
+export async function getThreadData(projectId: string, user: User) {
+  const [project] = await db
+    .select()
+    .from(projects)
+    .where(eq(projects.id, projectId))
+    .limit(1);
+  const msgs = await getProjectMessages(projectId);
+
+  const quoteIds = [
+    ...new Set(
+      msgs
+        .filter((m) => m.attachmentType === "quote" && m.attachmentId)
+        .map((m) => m.attachmentId as string),
+    ),
+  ];
+  const invoiceIds = [
+    ...new Set(
+      msgs
+        .filter((m) => m.attachmentType === "invoice" && m.attachmentId)
+        .map((m) => m.attachmentId as string),
+    ),
+  ];
+
+  const quotes: Record<string, QuoteCard> = {};
+  if (quoteIds.length) {
+    const rows = await db
+      .select()
+      .from(quotations)
+      .where(inArray(quotations.id, quoteIds));
+    const totals = await db
+      .select({
+        qid: quotationItems.quotationId,
+        sub: sql<number>`coalesce(sum(${quotationItems.quantity} * ${quotationItems.unitPrice}), 0)::float8`,
+      })
+      .from(quotationItems)
+      .where(inArray(quotationItems.quotationId, quoteIds))
+      .groupBy(quotationItems.quotationId);
+    const totalMap = new Map(totals.map((t) => [t.qid, t.sub]));
+    for (const q of rows) {
+      const sub = totalMap.get(q.id) ?? 0;
+      quotes[q.id] = {
+        id: q.id,
+        number: q.number,
+        title: q.title,
+        status: q.status,
+        currency: q.currency,
+        total: sub * (1 + q.taxRate / 100),
+      };
+    }
+  }
+
+  const invoiceCards: Record<string, InvoiceCard> = {};
+  if (invoiceIds.length) {
+    const rows = await db
+      .select()
+      .from(invoices)
+      .where(inArray(invoices.id, invoiceIds));
+    for (const inv of rows) {
+      invoiceCards[inv.id] = {
+        id: inv.id,
+        number: inv.number,
+        amount: inv.amount,
+        status: inv.status,
+        dueAt: inv.dueAt,
+      };
+    }
+  }
+
+  // Composer options (admin only).
+  let attachables: {
+    quotes: { id: string; number: string; title: string }[];
+    invoices: { id: string; number: string; amount: number }[];
+  } | null = null;
+  if (user.role === "admin" && project) {
+    const cq = await db
+      .select({ id: quotations.id, number: quotations.number, title: quotations.title })
+      .from(quotations)
+      .where(eq(quotations.companyId, project.companyId))
+      .orderBy(desc(quotations.createdAt));
+    const ci = await db
+      .select({ id: invoices.id, number: invoices.number, amount: invoices.amount })
+      .from(invoices)
+      .where(eq(invoices.projectId, projectId))
+      .orderBy(desc(invoices.createdAt));
+    attachables = { quotes: cq, invoices: ci };
+  }
+
+  return { project, messages: msgs, quotes, invoices: invoiceCards, attachables };
 }
 
 export async function getConversations(user: User) {

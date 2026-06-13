@@ -6,6 +6,15 @@ import { db } from "@/db";
 import { messages, projects, threadReads } from "@/db/schema";
 import { currentUser } from "@/lib/session";
 
+type AttachmentType = "quote" | "invoice" | "approval";
+
+function defaultBodyFor(type: AttachmentType | null) {
+  if (type === "quote") return "Here's your quote — review and accept below.";
+  if (type === "invoice") return "Sharing an invoice for this project.";
+  if (type === "approval") return "Requesting your sign-off on the current stage.";
+  return "";
+}
+
 async function loadAccessibleProject(
   projectId: string,
   role: string,
@@ -41,10 +50,31 @@ export async function postProjectMessage(formData: FormData) {
 
   const projectId = String(formData.get("projectId") ?? "");
   const body = String(formData.get("body") ?? "").trim();
-  if (!projectId || !body) return;
+
+  // Attachments are admin-only.
+  let attachmentType: AttachmentType | null = null;
+  let attachmentId: string | null = null;
+  if (user.role === "admin") {
+    const t = String(formData.get("attachmentType") ?? "");
+    if (t === "quote" || t === "invoice" || t === "approval") {
+      attachmentType = t;
+      attachmentId = String(formData.get("attachmentId") ?? "") || null;
+    }
+  }
+
+  if (!projectId || (!body && !attachmentType)) return;
 
   const project = await loadAccessibleProject(projectId, user.role, user.companyId);
   if (!project) return;
+
+  // A sign-off request flips the project into "awaiting approval".
+  if (attachmentType === "approval") {
+    attachmentId = projectId;
+    await db
+      .update(projects)
+      .set({ awaitingApproval: true })
+      .where(eq(projects.id, projectId));
+  }
 
   await db.insert(messages).values({
     projectId,
@@ -52,7 +82,9 @@ export async function postProjectMessage(formData: FormData) {
     authorId: user.id,
     authorName: user.name ?? user.email ?? "User",
     authorRole: user.role,
-    body,
+    body: body || defaultBodyFor(attachmentType),
+    attachmentType,
+    attachmentId,
   });
   // Sender is caught up on their own message.
   await upsertRead(user.id, projectId);

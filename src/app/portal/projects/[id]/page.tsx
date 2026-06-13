@@ -3,9 +3,9 @@ import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/session";
 import {
   getProject,
-  getProjectMessages,
   getProjectMilestones,
   getProjectNotes,
+  getThreadData,
 } from "@/lib/queries";
 import { Badge } from "@/components/app/badge";
 import { StageTimeline } from "@/components/app/stage-timeline";
@@ -37,7 +37,7 @@ export default async function ProjectDetail({
   const status = PROJECT_STATUS[project.status];
   const updates = await getProjectNotes(project.id, true);
   const milestones = await getProjectMilestones(project.id);
-  const thread = await getProjectMessages(project.id);
+  const thread = await getThreadData(project.id, user);
   const stages = stagesFor(project.type as ProjectType);
 
   return (
@@ -102,7 +102,14 @@ export default async function ProjectDetail({
         )}
       </section>
 
-      <MessageThread projectId={project.id} messages={thread} meRole="client" />
+      <MessageThread
+        projectId={project.id}
+        messages={thread.messages}
+        quotes={thread.quotes}
+        invoices={thread.invoices}
+        project={project}
+        meRole="client"
+      />
       <MarkRead projectId={project.id} />
 
       {milestones.length > 0 && (

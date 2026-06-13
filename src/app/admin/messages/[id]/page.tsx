@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/session";
-import { getCompany, getProject, getProjectMessages } from "@/lib/queries";
+import { getCompany, getProject, getThreadData } from "@/lib/queries";
 import { MessageThread } from "@/components/app/message-thread";
 import { MarkRead } from "@/components/app/mark-read";
 
@@ -10,12 +10,12 @@ export default async function AdminConversation({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requireAdmin();
+  const user = await requireAdmin();
   const { id } = await params;
   const project = await getProject(id);
   if (!project) notFound();
   const company = await getCompany(project.companyId);
-  const thread = await getProjectMessages(id);
+  const thread = await getThreadData(id, user);
 
   return (
     <div className="space-y-6">
@@ -35,7 +35,15 @@ export default async function AdminConversation({
           Open project →
         </Link>
       </header>
-      <MessageThread projectId={id} messages={thread} meRole="admin" />
+      <MessageThread
+        projectId={id}
+        messages={thread.messages}
+        quotes={thread.quotes}
+        invoices={thread.invoices}
+        project={project}
+        attachables={thread.attachables}
+        meRole="admin"
+      />
     </div>
   );
 }

@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { requireAdmin } from "@/lib/session";
 import {
   getCompany,
   getProject,
-  getProjectMessages,
   getProjectMilestones,
+  getThreadData,
 } from "@/lib/queries";
 import { Badge } from "@/components/app/badge";
 import { Field, Panel, Submit, inputCls } from "@/components/app/form";
@@ -34,13 +35,14 @@ export default async function AdminProjectDetail({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const user = await requireAdmin();
   const { id } = await params;
   const project = await getProject(id);
   if (!project) notFound();
 
   const company = await getCompany(project.companyId);
   const milestones = await getProjectMilestones(id);
-  const thread = await getProjectMessages(id);
+  const thread = await getThreadData(id, user);
   const stages = stagesFor(project.type as ProjectType);
   const { stages: pStages } = projectProgress(project);
   const status = PROJECT_STATUS[project.status];
@@ -214,7 +216,15 @@ export default async function AdminProjectDetail({
         </form>
       </Panel>
 
-      <MessageThread projectId={project.id} messages={thread} meRole="admin" />
+      <MessageThread
+        projectId={project.id}
+        messages={thread.messages}
+        quotes={thread.quotes}
+        invoices={thread.invoices}
+        project={project}
+        attachables={thread.attachables}
+        meRole="admin"
+      />
       <MarkRead projectId={project.id} />
     </div>
   );

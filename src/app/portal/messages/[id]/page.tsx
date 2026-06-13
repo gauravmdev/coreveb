@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/session";
-import { getProject, getProjectMessages } from "@/lib/queries";
+import { getProject, getThreadData } from "@/lib/queries";
 import { MessageThread } from "@/components/app/message-thread";
 import { MarkRead } from "@/components/app/mark-read";
 
@@ -14,7 +14,7 @@ export default async function PortalConversation({
   const { id } = await params;
   const project = await getProject(id);
   if (!project || project.companyId !== user.companyId) notFound();
-  const thread = await getProjectMessages(id);
+  const thread = await getThreadData(id, user);
 
   return (
     <div className="space-y-6">
@@ -31,7 +31,14 @@ export default async function PortalConversation({
           Open project →
         </Link>
       </header>
-      <MessageThread projectId={id} messages={thread} meRole="client" />
+      <MessageThread
+        projectId={id}
+        messages={thread.messages}
+        quotes={thread.quotes}
+        invoices={thread.invoices}
+        project={project}
+        meRole="client"
+      />
     </div>
   );
 }

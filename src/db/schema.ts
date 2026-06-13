@@ -246,6 +246,11 @@ export const messages = pgTable("message", {
   authorName: text("author_name").notNull(),
   authorRole: text("author_role", { enum: ["client", "admin"] }).notNull(),
   body: text("body").notNull(),
+  // Optional actionable attachment (quote/invoice/sign-off request).
+  attachmentType: text("attachment_type", {
+    enum: ["quote", "invoice", "approval"],
+  }),
+  attachmentId: text("attachment_id"),
   createdAt: createdAt(),
 });
 
