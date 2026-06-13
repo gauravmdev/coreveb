@@ -5,7 +5,6 @@ import { Services } from "@/components/sections/services";
 import { AICapabilities } from "@/components/sections/ai-capabilities";
 import { Process } from "@/components/sections/process";
 import { Work } from "@/components/sections/work";
-import { Testimonials } from "@/components/sections/testimonials";
 import { CTA } from "@/components/sections/cta";
 
 export default function HomePage() {
@@ -20,7 +19,6 @@ export default function HomePage() {
       <AICapabilities />
       <Process />
       <Work />
-      <Testimonials />
       <CTA />
     </>
   );
