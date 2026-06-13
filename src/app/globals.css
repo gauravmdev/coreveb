@@ -30,12 +30,65 @@
 }
 
 .theme-light {
-  --color-bg: #dce0ea;
-  --color-bg-soft: #e6eaf1;
-  --color-surface: #f1f3f8;
-  --color-border: #c4ccda;
-  --color-fg: #0e1424;
-  --color-muted: #4d566c;
+  --color-bg: #e4e7ee;
+  --color-bg-soft: #edeff4;
+  --color-surface: #ffffff;
+  --color-border: #c2cad8;
+  --color-fg: #0d1322;
+  --color-muted: #4a5468;
+}
+
+/* ---------- Theme-aware status badges (readable in both modes) ---------- */
+.badge-brand {
+  background-color: rgba(43, 123, 255, 0.16);
+  color: var(--color-brand-soft);
+  border-color: rgba(43, 123, 255, 0.32);
+}
+.badge-green {
+  background-color: rgba(16, 185, 129, 0.16);
+  color: #6ee7b7;
+  border-color: rgba(16, 185, 129, 0.32);
+}
+.badge-amber {
+  background-color: rgba(245, 158, 11, 0.16);
+  color: #fcd34d;
+  border-color: rgba(245, 158, 11, 0.32);
+}
+.badge-red {
+  background-color: rgba(239, 68, 68, 0.16);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.32);
+}
+.badge-muted {
+  background-color: color-mix(in srgb, var(--color-muted) 12%, transparent);
+  color: var(--color-muted);
+  border-color: var(--color-border);
+}
+
+.theme-light .badge-brand {
+  background-color: rgba(43, 123, 255, 0.12);
+  color: #1d4ed8;
+  border-color: rgba(43, 123, 255, 0.35);
+}
+.theme-light .badge-green {
+  background-color: rgba(16, 185, 129, 0.14);
+  color: #047857;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+.theme-light .badge-amber {
+  background-color: rgba(245, 158, 11, 0.16);
+  color: #b45309;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+.theme-light .badge-red {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+.theme-light .badge-muted {
+  background-color: #eceff4;
+  color: var(--color-muted);
+  border-color: var(--color-border);
 }
 
 html {

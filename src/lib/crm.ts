@@ -113,11 +113,11 @@ export function quoteTotals(
 export type Tone = "brand" | "green" | "amber" | "red" | "muted";
 
 export const TONE_CLASS: Record<Tone, string> = {
-  brand: "bg-brand/15 text-brand-soft border-brand/30",
-  green: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-  amber: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-  red: "bg-red-500/15 text-red-300 border-red-500/30",
-  muted: "bg-surface text-muted border-border",
+  brand: "badge-brand",
+  green: "badge-green",
+  amber: "badge-amber",
+  red: "badge-red",
+  muted: "badge-muted",
 };
 
 /* ------------------------------- Formatting ------------------------------- */
