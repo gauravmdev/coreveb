@@ -1,15 +1,15 @@
 import { requireAdmin } from "@/lib/session";
-import { AppHeader } from "@/components/app/app-header";
+import { AppShell, type NavItem } from "@/components/app/app-shell";
 
 export const dynamic = "force-dynamic";
 
-const nav = [
-  { label: "Overview", href: "/admin" },
-  { label: "Clients", href: "/admin/clients" },
-  { label: "Projects", href: "/admin/projects" },
-  { label: "Deals", href: "/admin/deals" },
-  { label: "Quotations", href: "/admin/quotations" },
-  { label: "Invoices", href: "/admin/invoices" },
+const nav: NavItem[] = [
+  { label: "Overview", href: "/admin", icon: "grid" },
+  { label: "Clients", href: "/admin/clients", icon: "users" },
+  { label: "Projects", href: "/admin/projects", icon: "folder" },
+  { label: "Deals", href: "/admin/deals", icon: "target" },
+  { label: "Quotations", href: "/admin/quotations", icon: "doc" },
+  { label: "Invoices", href: "/admin/invoices", icon: "receipt" },
 ];
 
 export default async function AdminLayout({
@@ -19,9 +19,8 @@ export default async function AdminLayout({
 }) {
   const user = await requireAdmin();
   return (
-    <div className="min-h-screen bg-bg">
-      <AppHeader user={user} nav={nav} area="Admin" />
-      <main className="mx-auto w-full max-w-7xl px-6 py-10">{children}</main>
-    </div>
+    <AppShell user={user} nav={nav} area="Admin">
+      {children}
+    </AppShell>
   );
 }

@@ -1,6 +1,6 @@
 import type { SVGProps } from "react";
 
-type IconName =
+export type IconName =
   | "code"
   | "device"
   | "spark"
@@ -11,9 +11,54 @@ type IconName =
   | "doc"
   | "chart"
   | "shield"
-  | "send";
+  | "send"
+  | "grid"
+  | "users"
+  | "folder"
+  | "receipt"
+  | "target"
+  | "logout";
 
 const paths: Record<IconName, React.ReactNode> = {
+  grid: (
+    <>
+      <rect x="3" y="3" width="7.5" height="7.5" rx="1.5" />
+      <rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5" />
+      <rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5" />
+      <rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5" />
+    </>
+  ),
+  users: (
+    <>
+      <circle cx="9" cy="8" r="3.2" />
+      <path d="M3.5 20a5.5 5.5 0 0 1 11 0" />
+      <path d="M16 5.2a3.2 3.2 0 0 1 0 5.6" />
+      <path d="M17.5 14.3A5.5 5.5 0 0 1 20.5 19" />
+    </>
+  ),
+  folder: (
+    <path d="M3 7a2 2 0 0 1 2-2h3.5l2 2H19a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
+  ),
+  receipt: (
+    <>
+      <path d="M5 3h14v18l-2.5-1.6L14 21l-2-1.6L10 21l-2.5-1.6L5 21Z" />
+      <path d="M9 8h6M9 12h6" />
+    </>
+  ),
+  target: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
+    </>
+  ),
+  logout: (
+    <>
+      <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" />
+      <path d="M10 12h10" />
+      <path d="m13 8 4 4-4 4" />
+    </>
+  ),
   send: (
     <>
       <path d="M4 12 20 4l-5 16-4-7-7-1Z" />

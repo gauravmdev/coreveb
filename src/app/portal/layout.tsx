@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/session";
-import { AppHeader } from "@/components/app/app-header";
+import { AppShell, type NavItem } from "@/components/app/app-shell";
 
 export const dynamic = "force-dynamic";
 
-const nav = [
-  { label: "Overview", href: "/portal" },
-  { label: "Quotations", href: "/portal/quotations" },
-  { label: "Invoices", href: "/portal/invoices" },
+const nav: NavItem[] = [
+  { label: "Overview", href: "/portal", icon: "grid" },
+  { label: "Quotations", href: "/portal/quotations", icon: "doc" },
+  { label: "Invoices", href: "/portal/invoices", icon: "receipt" },
 ];
 
 export default async function PortalLayout({
@@ -19,9 +19,8 @@ export default async function PortalLayout({
   if (user.role === "admin") redirect("/admin");
 
   return (
-    <div className="min-h-screen bg-bg">
-      <AppHeader user={user} nav={nav} area="Client portal" />
-      <main className="mx-auto w-full max-w-7xl px-6 py-10">{children}</main>
-    </div>
+    <AppShell user={user} nav={nav} area="Client portal">
+      {children}
+    </AppShell>
   );
 }
