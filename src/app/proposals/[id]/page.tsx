@@ -57,7 +57,7 @@ export default async function ProposalPage({
 
       <article className="mx-auto max-w-[820px] bg-white text-slate-800 shadow-xl">
         {/* ---------- Cover ---------- */}
-        <section className="proposal-page print-bg flex h-[1120px] flex-col justify-between overflow-hidden bg-gradient-to-br from-teal-900 to-teal-700 p-14 text-white">
+        <section className="proposal-page print-bg flex min-h-[600px] flex-col justify-between bg-gradient-to-br from-teal-900 to-teal-700 p-8 text-white sm:min-h-[1120px] sm:p-14">
           <Image
             src="/coreveb-logo-dark.png"
             alt="Coreveb"
@@ -71,13 +71,13 @@ export default async function ProposalPage({
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-teal-200">
               Proposal
             </p>
-            <h1 className="mt-4 text-5xl font-bold leading-tight">{quote.title}</h1>
+            <h1 className="mt-4 text-3xl font-bold leading-tight sm:text-5xl">{quote.title}</h1>
             {quote.subtitle && (
               <p className="mt-4 max-w-lg text-xl text-teal-50/90">{quote.subtitle}</p>
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-8 border-t border-white/20 pt-8 text-sm">
+          <div className="grid grid-cols-1 gap-6 border-t border-white/20 pt-8 text-sm sm:grid-cols-2 sm:gap-8">
             <div>
               <p className="font-semibold uppercase tracking-widest text-teal-200">
                 Prepared for
@@ -107,7 +107,7 @@ export default async function ProposalPage({
 
         {/* ---------- Narrative sections ---------- */}
         {sections.map((s, i) => (
-          <section key={s.id} className="proposal-page p-14">
+          <section key={s.id} className="proposal-page p-8 sm:p-14">
             <SectionLabel n={i + 1} />
             <h2 className="mt-3 text-3xl font-bold text-slate-900">{s.heading}</h2>
             <div className="mt-3 h-1 w-12 rounded bg-teal-600" />
@@ -119,14 +119,15 @@ export default async function ProposalPage({
         ))}
 
         {/* ---------- Commercial ---------- */}
-        <section className="proposal-page p-14">
+        <section className="proposal-page p-8 sm:p-14">
           <SectionLabel n={sections.length + 1} />
           <h2 className="mt-3 text-3xl font-bold text-slate-900">
             Commercial Proposal
           </h2>
           <div className="mt-3 h-1 w-12 rounded bg-teal-600" />
 
-          <table className="mt-8 w-full text-sm">
+          <div className="mt-8 overflow-x-auto">
+          <table className="w-full min-w-[28rem] text-sm">
             <thead>
               <tr className="print-bg bg-teal-800 text-left text-xs uppercase tracking-wider text-white">
                 <th className="rounded-l-lg px-4 py-3 font-semibold">Module</th>
@@ -178,6 +179,7 @@ export default async function ProposalPage({
               </tr>
             </tfoot>
           </table>
+          </div>
 
           {milestones.length > 0 && (
             <>
@@ -212,12 +214,12 @@ export default async function ProposalPage({
         </section>
 
         {/* ---------- Closing ---------- */}
-        <section className="proposal-page print-bg flex h-[1120px] flex-col justify-between overflow-hidden bg-gradient-to-br from-teal-900 to-teal-700 p-14 text-white">
+        <section className="proposal-page print-bg flex min-h-[600px] flex-col justify-between bg-gradient-to-br from-teal-900 to-teal-700 p-8 text-white sm:min-h-[1120px] sm:p-14">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-teal-200">
             Let&apos;s build it
           </p>
           <div>
-            <h2 className="text-5xl font-bold">Ready to start.</h2>
+            <h2 className="text-3xl font-bold sm:text-5xl">Ready to start.</h2>
             <p className="mt-6 max-w-md text-lg text-teal-50/90">
               If this works for your team, reply to this proposal or reach us at{" "}
               {site.email}{" "}and we&apos;ll share a kickoff plan and the advance
