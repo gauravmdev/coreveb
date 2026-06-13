@@ -21,7 +21,8 @@ export default async function PortalInvoices() {
         </p>
       </header>
 
-      <div className="overflow-hidden rounded-2xl border border-border">
+      {/* Table on sm+ */}
+      <div className="hidden overflow-x-auto rounded-2xl border border-border sm:block">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border bg-surface/40 text-left text-xs uppercase tracking-wider text-muted">
@@ -55,6 +56,29 @@ export default async function PortalInvoices() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Cards on mobile */}
+      <div className="space-y-3 sm:hidden">
+        {invoices.map((inv) => (
+          <div key={inv.id} className="rounded-2xl border border-border bg-surface/40 p-4">
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-sm text-muted">{inv.number}</span>
+              <Badge tone={INVOICE_STATUS[inv.status].tone}>
+                {INVOICE_STATUS[inv.status].label}
+              </Badge>
+            </div>
+            <div className="mt-2 text-lg font-semibold">{formatCurrency(inv.amount)}</div>
+            <div className="mt-1 text-xs text-muted">
+              Issued {formatDate(inv.issuedAt)} · Due {formatDate(inv.dueAt)}
+            </div>
+          </div>
+        ))}
+        {invoices.length === 0 && (
+          <p className="rounded-2xl border border-border bg-surface/40 p-4 text-sm text-muted">
+            No invoices yet.
+          </p>
+        )}
       </div>
     </div>
   );

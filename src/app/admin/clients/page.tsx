@@ -15,37 +15,62 @@ export default async function AdminClients() {
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-        <div className="overflow-hidden rounded-2xl border border-border">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border bg-surface/40 text-left text-xs uppercase tracking-wider text-muted">
-                <th className="px-5 py-3 font-medium">Company</th>
-                <th className="px-5 py-3 font-medium">Contact</th>
-                <th className="px-5 py-3 font-medium">Added</th>
-              </tr>
-            </thead>
-            <tbody>
-              {companies.map((c) => (
-                <tr key={c.id} className="border-b border-border/60 last:border-0">
-                  <td className="px-5 py-3">
-                    <Link href={`/admin/clients/${c.id}`} className="font-medium hover:text-brand-soft">
-                      {c.name}
-                    </Link>
-                    <div className="text-xs text-muted">{c.industry ?? "—"}</div>
-                  </td>
-                  <td className="px-5 py-3 text-muted">{c.contactEmail ?? "—"}</td>
-                  <td className="px-5 py-3 text-muted">{formatDate(c.createdAt)}</td>
+        <div>
+          {/* Table on sm+ */}
+          <div className="hidden overflow-x-auto rounded-2xl border border-border sm:block">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border bg-surface/40 text-left text-xs uppercase tracking-wider text-muted">
+                  <th className="px-5 py-3 font-medium">Company</th>
+                  <th className="px-5 py-3 font-medium">Contact</th>
+                  <th className="px-5 py-3 font-medium">Added</th>
                 </tr>
-              ))}
-              {companies.length === 0 && (
-                <tr>
-                  <td colSpan={3} className="px-5 py-6 text-center text-muted">
-                    No clients yet — add your first one.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {companies.map((c) => (
+                  <tr key={c.id} className="border-b border-border/60 last:border-0">
+                    <td className="px-5 py-3">
+                      <Link href={`/admin/clients/${c.id}`} className="font-medium hover:text-brand-soft">
+                        {c.name}
+                      </Link>
+                      <div className="text-xs text-muted">{c.industry ?? "—"}</div>
+                    </td>
+                    <td className="px-5 py-3 text-muted">{c.contactEmail ?? "—"}</td>
+                    <td className="px-5 py-3 text-muted">{formatDate(c.createdAt)}</td>
+                  </tr>
+                ))}
+                {companies.length === 0 && (
+                  <tr>
+                    <td colSpan={3} className="px-5 py-6 text-center text-muted">
+                      No clients yet — add your first one.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Cards on mobile */}
+          <div className="space-y-3 sm:hidden">
+            {companies.map((c) => (
+              <Link
+                key={c.id}
+                href={`/admin/clients/${c.id}`}
+                className="block rounded-2xl border border-border bg-surface/40 p-4"
+              >
+                <div className="font-medium">{c.name}</div>
+                <div className="mt-1 text-xs text-muted">
+                  {c.industry ?? "—"} · {c.contactEmail ?? "no contact"}
+                </div>
+                <div className="mt-1 text-xs text-muted">Added {formatDate(c.createdAt)}</div>
+              </Link>
+            ))}
+            {companies.length === 0 && (
+              <p className="rounded-2xl border border-border bg-surface/40 p-4 text-sm text-muted">
+                No clients yet — add your first one.
+              </p>
+            )}
+          </div>
         </div>
 
         <Panel title="Add client">

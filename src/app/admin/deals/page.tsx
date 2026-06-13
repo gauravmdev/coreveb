@@ -28,7 +28,8 @@ export default async function AdminDeals() {
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
-        <div className="overflow-hidden rounded-2xl border border-border">
+        <div>
+        <div className="hidden overflow-x-auto rounded-2xl border border-border sm:block">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-surface/40 text-left text-xs uppercase tracking-wider text-muted">
@@ -83,6 +84,47 @@ export default async function AdminDeals() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Cards on mobile */}
+        <div className="space-y-3 sm:hidden">
+          {rows.map(({ deal, companyName }) => (
+            <div key={deal.id} className="rounded-2xl border border-border bg-surface/40 p-4">
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-medium">{deal.title}</span>
+                <span className="font-semibold">{formatCurrency(deal.value)}</span>
+              </div>
+              <div className="mt-1 text-xs text-muted">
+                {companyName ?? "—"}
+                {deal.contactEmail ? ` · ${deal.contactEmail}` : ""}
+              </div>
+              <form action={setDealStage} className="mt-3 flex items-center gap-2">
+                <input type="hidden" name="dealId" value={deal.id} />
+                <Badge tone={DEAL_STAGE[deal.stage].tone}>
+                  {DEAL_STAGE[deal.stage].label}
+                </Badge>
+                <select name="stage" defaultValue={deal.stage} className={`${inputCls} w-auto flex-1 py-1`}>
+                  {DEAL_STAGES.map((s) => (
+                    <option key={s} value={s}>
+                      {DEAL_STAGE[s].label}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="submit"
+                  className="rounded-lg border border-border px-3 py-1 text-xs hover:border-brand/50"
+                >
+                  Move
+                </button>
+              </form>
+            </div>
+          ))}
+          {rows.length === 0 && (
+            <p className="rounded-2xl border border-border bg-surface/40 p-4 text-sm text-muted">
+              No deals yet.
+            </p>
+          )}
+        </div>
         </div>
 
         <Panel title="New deal">

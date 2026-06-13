@@ -27,50 +27,85 @@ export default async function AdminQuotations() {
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-        <div className="overflow-hidden rounded-2xl border border-border">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border bg-surface/40 text-left text-xs uppercase tracking-wider text-muted">
-                <th className="px-5 py-3 font-medium">Quote</th>
-                <th className="px-5 py-3 font-medium">Client</th>
-                <th className="px-5 py-3 text-right font-medium">Total</th>
-                <th className="px-5 py-3 font-medium">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map(({ quote, companyName }) => {
-                const subtotal = totals.get(quote.id) ?? 0;
-                const total = subtotal * (1 + quote.taxRate / 100);
-                return (
-                  <tr key={quote.id} className="border-b border-border/60 last:border-0">
-                    <td className="px-5 py-3">
-                      <Link
-                        href={`/admin/quotations/${quote.id}`}
-                        className="font-mono text-muted hover:text-brand-soft"
-                      >
-                        {quote.number}
-                      </Link>
-                      <div className="text-xs text-muted">{quote.title}</div>
-                    </td>
-                    <td className="px-5 py-3">{companyName ?? "—"}</td>
-                    <td className="px-5 py-3 text-right">{formatCurrency(total)}</td>
-                    <td className="px-5 py-3">
-                      <Badge tone={QUOTE_STATUS[quote.status].tone}>
-                        {QUOTE_STATUS[quote.status].label}
-                      </Badge>
+        <div>
+          {/* Table on sm+ */}
+          <div className="hidden overflow-x-auto rounded-2xl border border-border sm:block">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border bg-surface/40 text-left text-xs uppercase tracking-wider text-muted">
+                  <th className="px-5 py-3 font-medium">Quote</th>
+                  <th className="px-5 py-3 font-medium">Client</th>
+                  <th className="px-5 py-3 text-right font-medium">Total</th>
+                  <th className="px-5 py-3 font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map(({ quote, companyName }) => {
+                  const subtotal = totals.get(quote.id) ?? 0;
+                  const total = subtotal * (1 + quote.taxRate / 100);
+                  return (
+                    <tr key={quote.id} className="border-b border-border/60 last:border-0">
+                      <td className="px-5 py-3">
+                        <Link
+                          href={`/admin/quotations/${quote.id}`}
+                          className="font-mono text-muted hover:text-brand-soft"
+                        >
+                          {quote.number}
+                        </Link>
+                        <div className="text-xs text-muted">{quote.title}</div>
+                      </td>
+                      <td className="px-5 py-3">{companyName ?? "—"}</td>
+                      <td className="px-5 py-3 text-right">{formatCurrency(total)}</td>
+                      <td className="px-5 py-3">
+                        <Badge tone={QUOTE_STATUS[quote.status].tone}>
+                          {QUOTE_STATUS[quote.status].label}
+                        </Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
+                {rows.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="px-5 py-6 text-center text-muted">
+                      No quotations yet — create one to send a quote.
                     </td>
                   </tr>
-                );
-              })}
-              {rows.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="px-5 py-6 text-center text-muted">
-                    No quotations yet — create one to send a quote.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Cards on mobile */}
+          <div className="space-y-3 sm:hidden">
+            {rows.map(({ quote, companyName }) => {
+              const subtotal = totals.get(quote.id) ?? 0;
+              const total = subtotal * (1 + quote.taxRate / 100);
+              return (
+                <Link
+                  key={quote.id}
+                  href={`/admin/quotations/${quote.id}`}
+                  className="block rounded-2xl border border-border bg-surface/40 p-4"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-sm text-muted">{quote.number}</span>
+                    <Badge tone={QUOTE_STATUS[quote.status].tone}>
+                      {QUOTE_STATUS[quote.status].label}
+                    </Badge>
+                  </div>
+                  <div className="mt-1 font-medium">{quote.title}</div>
+                  <div className="mt-1 flex items-center justify-between text-xs text-muted">
+                    <span>{companyName ?? "—"}</span>
+                    <span className="font-medium text-fg">{formatCurrency(total)}</span>
+                  </div>
+                </Link>
+              );
+            })}
+            {rows.length === 0 && (
+              <p className="rounded-2xl border border-border bg-surface/40 p-4 text-sm text-muted">
+                No quotations yet — create one to send a quote.
+              </p>
+            )}
+          </div>
         </div>
 
         <Panel title="New quotation">

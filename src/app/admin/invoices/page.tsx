@@ -30,7 +30,8 @@ export default async function AdminInvoices() {
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
-        <div className="overflow-hidden rounded-2xl border border-border">
+        <div>
+        <div className="hidden overflow-x-auto rounded-2xl border border-border sm:block">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-surface/40 text-left text-xs uppercase tracking-wider text-muted">
@@ -87,6 +88,47 @@ export default async function AdminInvoices() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Cards on mobile */}
+        <div className="space-y-3 sm:hidden">
+          {rows.map(({ invoice: inv, companyName, projectName }) => (
+            <div key={inv.id} className="rounded-2xl border border-border bg-surface/40 p-4">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-sm text-muted">{inv.number}</span>
+                <span className="font-semibold">{formatCurrency(inv.amount)}</span>
+              </div>
+              <div className="mt-1 text-xs text-muted">
+                {companyName ?? "—"}
+                {projectName ? ` · ${projectName}` : ""} · Due {formatDate(inv.dueAt)}
+              </div>
+              <form action={setInvoiceStatus} className="mt-3 flex items-center gap-2">
+                <input type="hidden" name="invoiceId" value={inv.id} />
+                <Badge tone={INVOICE_STATUS[inv.status].tone}>
+                  {INVOICE_STATUS[inv.status].label}
+                </Badge>
+                <select name="status" defaultValue={inv.status} className={`${inputCls} w-auto flex-1 py-1`}>
+                  {INVOICE_STATUSES.map((s) => (
+                    <option key={s} value={s}>
+                      {INVOICE_STATUS[s].label}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="submit"
+                  className="rounded-lg border border-border px-3 py-1 text-xs hover:border-brand/50"
+                >
+                  Set
+                </button>
+              </form>
+            </div>
+          ))}
+          {rows.length === 0 && (
+            <p className="rounded-2xl border border-border bg-surface/40 p-4 text-sm text-muted">
+              No invoices yet.
+            </p>
+          )}
+        </div>
         </div>
 
         <Panel title="New invoice">
