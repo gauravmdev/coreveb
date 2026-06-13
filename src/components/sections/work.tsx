@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Container, Eyebrow, Section } from "@/components/ui";
 import { SpotlightCard } from "@/components/spotlight-card";
 import { work } from "@/lib/site";
@@ -35,9 +36,12 @@ export function Work() {
               </div>
               <h3 className="mt-5 text-xl font-semibold">{w.title}</h3>
               <p className="mt-2 text-sm text-muted">{w.blurb}</p>
-              <span className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-brand-soft opacity-0 transition-opacity group-hover:opacity-100">
-                View case study →
-              </span>
+              <Link
+                href="/contact"
+                className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-brand-soft transition-opacity hover:underline sm:opacity-0 sm:group-hover:opacity-100"
+              >
+                Start a similar project →
+              </Link>
             </SpotlightCard>
           ))}
         </div>

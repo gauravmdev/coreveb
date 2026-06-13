@@ -129,30 +129,35 @@ export const processSteps = [
   },
 ] as const;
 
+// NOTE: Illustrative portfolio examples — replace with your real case studies.
 export const work = [
   {
-    title: "Project Title",
+    title: "Retail Operations Suite",
     category: "SaaS Platform",
-    blurb: "Short one-line summary of the platform you built and the outcome.",
+    blurb:
+      "Multi-store order, delivery, and settlement platform that cut manual reconciliation by 70%.",
     tag: "Software",
   },
   {
-    title: "Project Title",
+    title: "On-Demand Delivery App",
     category: "Mobile App",
-    blurb: "Short one-line summary of the app and what it does for users.",
+    blurb:
+      "Customer and driver apps with live tracking and push — 4.8★ across the app stores.",
     tag: "Mobile",
   },
   {
-    title: "Project Title",
+    title: "B2B Demand Engine",
     category: "Performance Marketing",
-    blurb: "Short one-line summary of the campaign and the result it drove.",
+    blurb:
+      "Paid, SEO, and content program that tripled qualified inbound in two quarters.",
     tag: "Marketing",
   },
   {
-    title: "Project Title",
-    category: "Web App",
-    blurb: "Short one-line summary of the web app and the problem it solves.",
-    tag: "Software",
+    title: "AI Support Copilot",
+    category: "AI / Web App",
+    blurb:
+      "RAG assistant grounded in product docs that deflected 45% of support tickets.",
+    tag: "AI",
   },
 ] as const;
 
