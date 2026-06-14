@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { eq, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import {
+  appSettings,
   companies,
   contactSubmissions,
   deals,
@@ -449,4 +450,25 @@ export async function setLeadStatus(formData: FormData) {
     .set({ status: status as "new" | "read" | "archived" })
     .where(eq(contactSubmissions.id, id));
   revalidatePath("/admin/leads");
+}
+
+/* -------------------------------- Settings -------------------------------- */
+
+export async function updateContactSettings(formData: FormData) {
+  await requireAdmin();
+  const entries: [string, string][] = [
+    ["whatsapp", str(formData.get("whatsapp")).replace(/\D/g, "")],
+    ["phone", str(formData.get("phone"))],
+    ["email", str(formData.get("email"))],
+  ];
+  for (const [key, value] of entries) {
+    if (!value) continue;
+    await db
+      .insert(appSettings)
+      .values({ key, value })
+      .onConflictDoUpdate({ target: appSettings.key, set: { value } });
+  }
+  // Refresh everywhere the contact details are shown.
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/settings");
 }

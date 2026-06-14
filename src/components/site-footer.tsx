@@ -1,9 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { nav, site } from "@/lib/site";
+import { getContactSettings } from "@/lib/queries";
 import { Container } from "@/components/ui";
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const contact = await getContactSettings();
   return (
     <footer className="mt-auto border-t border-border/60 bg-bg-soft">
       <Container className="py-14">
@@ -46,15 +48,15 @@ export function SiteFooter() {
               <ul className="mt-4 space-y-3">
                 <li>
                   <a
-                    href={`mailto:${site.email}`}
+                    href={`mailto:${contact.email}`}
                     className="text-sm text-muted transition-colors hover:text-fg"
                   >
-                    {site.email}
+                    {contact.email}
                   </a>
                 </li>
                 <li>
                   <a
-                    href={`https://wa.me/${site.whatsapp}`}
+                    href={`https://wa.me/${contact.whatsapp}`}
                     target="_blank"
                     rel="noreferrer"
                     className="text-sm text-muted transition-colors hover:text-fg"
@@ -83,8 +85,8 @@ export function SiteFooter() {
           <p>
             © {new Date().getFullYear()} {site.name}. All rights reserved.
           </p>
-          <a href={`mailto:${site.email}`} className="hover:text-fg">
-            {site.email}
+          <a href={`mailto:${contact.email}`} className="hover:text-fg">
+            {contact.email}
           </a>
         </div>
       </Container>

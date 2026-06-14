@@ -282,6 +282,12 @@ export const proposalSections = pgTable("proposal_section", {
   position: integer("position").notNull().default(0),
 });
 
+/** Key-value store for admin-editable site settings (contact details, etc.). */
+export const appSettings = pgTable("app_setting", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
+});
+
 /** Inbound leads from the public contact form. */
 export const contactSubmissions = pgTable("contact_submission", {
   id: uuid(),
@@ -309,3 +315,4 @@ export type Milestone = typeof milestones.$inferSelect;
 export type Message = typeof messages.$inferSelect;
 export type ProposalSection = typeof proposalSections.$inferSelect;
 export type ContactSubmission = typeof contactSubmissions.$inferSelect;
+export type AppSetting = typeof appSettings.$inferSelect;

@@ -2,7 +2,9 @@ import "server-only";
 import { and, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import type { PgTable } from "drizzle-orm/pg-core";
 import { db } from "@/db";
+import { site } from "@/lib/site";
 import {
+  appSettings,
   companies,
   contactSubmissions,
   deals,
@@ -464,4 +466,36 @@ export async function countNewLeads() {
     .from(contactSubmissions)
     .where(eq(contactSubmissions.status, "new"));
   return row?.n ?? 0;
+}
+
+/* ------------------------------- Settings --------------------------------- */
+
+export type ContactSettings = {
+  whatsapp: string;
+  phone: string;
+  email: string;
+};
+
+/** Admin-editable contact details, falling back to the defaults in site.ts. */
+export async function getContactSettings(): Promise<ContactSettings> {
+  const defaults = {
+    whatsapp: site.whatsapp,
+    phone: site.phone,
+    email: site.email,
+  };
+  try {
+    const rows = await db
+      .select()
+      .from(appSettings)
+      .where(inArray(appSettings.key, ["whatsapp", "phone", "email"]));
+    const map = new Map(rows.map((r) => [r.key, r.value]));
+    return {
+      whatsapp: map.get("whatsapp") || defaults.whatsapp,
+      phone: map.get("phone") || defaults.phone,
+      email: map.get("email") || defaults.email,
+    };
+  } catch {
+    // DB unavailable or table not migrated yet — fall back to site defaults.
+    return defaults;
+  }
 }

@@ -3,6 +3,9 @@ import { SiteFooter } from "@/components/site-footer";
 import { RevealObserver } from "@/components/reveal-observer";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 
+// Footer & WhatsApp button read admin-editable contact settings from the DB.
+export const dynamic = "force-dynamic";
+
 export default function MarketingLayout({
   children,
 }: {

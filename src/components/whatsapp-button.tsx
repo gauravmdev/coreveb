@@ -1,11 +1,12 @@
-import { site } from "@/lib/site";
+import { getContactSettings } from "@/lib/queries";
 
-/** Floating WhatsApp chat button shown across the marketing site. */
-export function WhatsAppButton() {
+/** Floating WhatsApp chat button shown across the site. */
+export async function WhatsAppButton() {
+  const { whatsapp } = await getContactSettings();
   const text = encodeURIComponent("Hi Coreveb, I'd like to discuss a project.");
   return (
     <a
-      href={`https://wa.me/${site.whatsapp}?text=${text}`}
+      href={`https://wa.me/${whatsapp}?text=${text}`}
       target="_blank"
       rel="noreferrer"
       aria-label="Chat with us on WhatsApp"
